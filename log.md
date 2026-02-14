@@ -75,6 +75,12 @@ To verify everything worked:
 
 ---
 
+## ITR0 - Customer Interview Video
+
+https://youtu.be/5tUal_SoTYs - The video of the customer meeting invloving summarized video of meeting in where we discussed vision and possibilities of software.
+
+---
+
 ## Plan Adjustments (ITR0 → ITR1)
 
 Originally, we planned to include some multi-term comparisons earlier. After reviewing our timeline, we decided to focus only on core expense tracking for ITR1 and move advanced reporting features to later iterations.
