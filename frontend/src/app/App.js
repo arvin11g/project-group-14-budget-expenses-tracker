@@ -9,6 +9,7 @@ function App() {
   return (
     <div className="app-container">
       <Sidebar />
+
       <div className="main-content">
         <Routes>
           <Route path="/" element={<Dashboard />} />
