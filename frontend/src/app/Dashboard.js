@@ -1,69 +1,181 @@
+import { useState, useEffect } from "react";
+import expenseAPI from "../api/ExpensesAPI";
+import budgetAPI from "../api/BudgetAPI";
+
+const TERMS = ["Winter 2026", "Summer 2026", "Fall 2026", "Winter 2027"];
+
 function Dashboard() {
-  const totalBudget = 2500;
-  const totalSpent = 1420;
+  const [selectedTerm, setSelectedTerm] = useState("Winter 2026");
+  const [totalBudget, setTotalBudget] = useState(0);
+  const [totalSpent, setTotalSpent] = useState(0);
+  const [recentExpenses, setRecentExpenses] = useState([]);
+  const [editingBudget, setEditingBudget] = useState(false);
+  const [budgetInput, setBudgetInput] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [selectedTerm]);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+
+      const [expensesRes, budgetRes] = await Promise.allSettled([
+        expenseAPI.getExpensesByTerm(selectedTerm),
+        budgetAPI.getBudgetByTerm(selectedTerm),
+      ]);
+
+      // Expenses
+      const expenses = expensesRes.status === "fulfilled" ? expensesRes.value.data : [];
+      const spent = expenses.reduce((sum, e) => sum + e.amount, 0);
+      setTotalSpent(spent);
+      const sorted = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+      setRecentExpenses(sorted.slice(0, 3));
+
+      // Budget — id will be null if no budget saved yet for this term
+      if (budgetRes.status === "fulfilled") {
+        const data = budgetRes.value.data;
+        if (data.id !== null && data.id !== undefined) {
+          setTotalBudget(data.amount);
+          setBudgetInput(data.amount);
+        } else {
+          setTotalBudget(0);
+          setBudgetInput("");
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching dashboard data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveBudget = async () => {
+    const amount = parseFloat(budgetInput);
+    if (isNaN(amount) || amount < 0) {
+      alert("Please enter a valid budget amount.");
+      return;
+    }
+    try {
+      await budgetAPI.setBudgetForTerm(selectedTerm, amount);
+      setTotalBudget(amount);
+      setEditingBudget(false);
+    } catch (err) {
+      console.error("Error saving budget:", err);
+      alert("Failed to save budget.");
+    }
+  };
+
   const remaining = totalBudget - totalSpent;
+  const percentage = totalBudget > 0 ? Math.min((totalSpent / totalBudget) * 100, 100) : 0;
+  const overBudget = totalSpent > totalBudget && totalBudget > 0;
+
+  if (loading) return <div style={{ padding: "50px", textAlign: "center" }}><h2>Loading...</h2></div>;
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h1>Dashboard</h1>
+        <select
+          value={selectedTerm}
+          onChange={(e) => setSelectedTerm(e.target.value)}
+          style={{ padding: "8px 12px", fontSize: "15px", borderRadius: "8px", border: "1px solid #d1d5db" }}
+        >
+          {TERMS.map((t) => <option key={t} value={t}>{t}</option>)}
+        </select>
+      </div>
 
       {/* Top Summary Cards */}
       <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
-        <SummaryCard title="Total Budget" value={`$${totalBudget}`} />
-        <SummaryCard title="Total Spent" value={`$${totalSpent}`} />
-        <SummaryCard title="Remaining" value={`$${remaining}`} />
+
+        {/* Budget card with inline editing */}
+        <div className="card" style={{ width: "220px" }}>
+          <div className="card-title">Total Budget</div>
+          {editingBudget ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "8px" }}>
+              <input
+                type="number"
+                value={budgetInput}
+                onChange={(e) => setBudgetInput(e.target.value)}
+                placeholder="Enter budget"
+                style={{ padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "14px" }}
+              />
+              <div style={{ display: "flex", gap: "6px" }}>
+                <button onClick={handleSaveBudget} style={{ flex: 1, padding: "6px", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer" }}>Save</button>
+                <button onClick={() => setEditingBudget(false)} style={{ flex: 1, padding: "6px", background: "#e5e7eb", border: "none", borderRadius: "6px", cursor: "pointer" }}>Cancel</button>
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px" }}>
+              <div className="card-value">{totalBudget > 0 ? `$${totalBudget.toFixed(2)}` : "Not set"}</div>
+              <button onClick={() => setEditingBudget(true)} style={{ fontSize: "12px", padding: "3px 8px", background: "#f3f4f6", border: "1px solid #d1d5db", borderRadius: "6px", cursor: "pointer" }}>Edit</button>
+            </div>
+          )}
+        </div>
+
+        <SummaryCard title="Total Spent" value={`$${totalSpent.toFixed(2)}`} />
+        <SummaryCard
+          title="Remaining"
+          value={totalBudget > 0 ? `$${remaining.toFixed(2)}` : "No budget set"}
+          valueColor={overBudget ? "#ef4444" : remaining > 0 ? "#16a34a" : "#6b7280"}
+        />
       </div>
 
       {/* Lower Section */}
       <div style={{ display: "flex", gap: "20px", marginTop: "30px" }}>
         <div className="card" style={{ flex: 1 }}>
           <h3>Budget Progress</h3>
-          <ProgressBar percentage={(totalSpent / totalBudget) * 100} />
+          {totalBudget > 0 ? (
+            <ProgressBar percentage={percentage} overBudget={overBudget} />
+          ) : (
+            <p style={{ color: "#6b7280", marginTop: "15px" }}>Set a budget above to track progress.</p>
+          )}
         </div>
 
         <div className="card" style={{ flex: 1 }}>
-          <h3>Recent Transactions</h3>
-          <ul>
-            <li>Groceries - $120</li>
-            <li>Gym - $45</li>
-            <li>Transport - $80</li>
-          </ul>
+          <h3>Recent Transactions — {selectedTerm}</h3>
+          {recentExpenses.length === 0 ? (
+            <p style={{ color: "#6b7280" }}>No expenses for this term yet.</p>
+          ) : (
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {recentExpenses.map((e) => (
+                <li key={e.id} style={{ padding: "8px 0", borderBottom: "1px solid #e5e7eb", display: "flex", justifyContent: "space-between" }}>
+                  <span>{e.description} <span style={{ color: "#6b7280", fontSize: "13px" }}>({e.category})</span></span>
+                  <strong>${e.amount.toFixed(2)}</strong>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function SummaryCard({ title, value }) {
+function SummaryCard({ title, value, valueColor }) {
   return (
     <div className="card" style={{ width: "220px" }}>
       <div className="card-title">{title}</div>
-      <div className="card-value">{value}</div>
+      <div className="card-value" style={valueColor ? { color: valueColor } : {}}>{value}</div>
     </div>
   );
 }
 
-function ProgressBar({ percentage }) {
+function ProgressBar({ percentage, overBudget }) {
   return (
     <div style={{ marginTop: "20px" }}>
-      <div
-        style={{
-          background: "#e5e7eb",
-          height: "12px",
-          borderRadius: "10px"
-        }}
-      >
-        <div
-          style={{
-            width: `${percentage}%`,
-            background: "#2563eb",
-            height: "100%",
-            borderRadius: "10px"
-          }}
-        />
+      <div style={{ background: "#e5e7eb", height: "12px", borderRadius: "10px" }}>
+        <div style={{
+          width: `${percentage}%`,
+          background: overBudget ? "#ef4444" : "#2563eb",
+          height: "100%",
+          borderRadius: "10px",
+          transition: "width 0.3s ease"
+        }} />
       </div>
-      <p style={{ marginTop: "10px" }}>
-        {percentage.toFixed(1)}% Used
+      <p style={{ marginTop: "10px", color: overBudget ? "#ef4444" : "inherit" }}>
+        {percentage.toFixed(1)}% Used {overBudget && "⚠️ Over budget!"}
       </p>
     </div>
   );

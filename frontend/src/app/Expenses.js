@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import expenseAPI from "../api/ExpensesAPI";
 
+
 function Expenses() {
-  // State to store list of expenses
+  // State to store list of expenses --> used AI to help generate const
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

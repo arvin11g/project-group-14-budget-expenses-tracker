@@ -10,6 +10,8 @@ function Sidebar() {
         <Link to="/">Dashboard</Link>
         <Link to="/budgets">Budgets</Link>
         <Link to="/expenses">Expenses</Link>
+        <Link to="/charts">Charts</Link>
+        <Link to="/profile">Profile</Link>
       </nav>
     </div>
   );
