@@ -10,6 +10,10 @@ const budgetAPI = {
   
   // Matches your POST /api/budgets endpoint — sends full budget object in body
   setBudgetForTerm: (term, amount) => api.post('', { academicTerm: term, amount: amount }),
+
+  getTermSummary: (term) => api.get(`/term/${term}/summary`),
+
+  getAllBudgets: () => api.get(""),
 };
 
 export default budgetAPI;

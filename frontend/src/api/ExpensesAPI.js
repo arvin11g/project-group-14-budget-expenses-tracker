@@ -24,7 +24,7 @@ const expenseAPI = {
   },
 
   // GET expenses grouped by category for a term
-  getExpensesGroupedByCategory: (term) => {
+  getExpensesByTermGrouped: (term) => {
     return api.get(`/term/${term}/grouped`);
   },
 

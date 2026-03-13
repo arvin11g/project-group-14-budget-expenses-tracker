@@ -63,5 +63,9 @@ public class BudgetController {
                 )
         );
     }
+    @GetMapping
+    public ResponseEntity<?> getAllBudgets() {
+        return ResponseEntity.ok(budgetRepository.findAll());
+    }
 
 }
