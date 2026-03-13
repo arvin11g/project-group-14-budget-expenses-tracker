@@ -118,63 +118,37 @@ Profile
 
 ## Database Design
 
-The application supports two database modes.
+The application supports two database modes: a persistent PostgreSQL database and an in-memory H2 database.
 
-PostgreSQL (Persistent Mode)
-- Stores data permanently
-- Used as the real database
+### PostgreSQL (Persistent Mode)
 
-H2 (Stub / In-Memory Mode)
-- Used for testing
-- Data resets whenever the application restarts
+PostgreSQL is used as the main database for the application. In this mode, data is stored permanently and remains available even after the application restarts.
 
-Both modes load the same sample data when the database is empty.
-
----
-
-## Switching Between Databases
-
-The application supports both a **persistent database** and a **stub (in-memory) database**.
-
-This is done using **Spring profiles**, which allows the data source to be switched with a single command when starting the backend.
-
-### H2 Stub Database (Testing Mode)
-
-This mode uses an **in-memory H2 database**.  
-Data is temporary and resets whenever the application restarts.
-
-Run using:
-
-```
-./mvnw spring-boot:run -Dspring-boot.run.profiles=h2
-```
-
-This mode is useful for:
-- testing
-- development
-- integration tests
-
----
-
-### PostgreSQL Persistent Database
-
-This mode uses **PostgreSQL** as the real database.  
-Data is stored permanently.
-
-Run using:
+Run the backend using:
 
 ```
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres
 ```
 
-This mode represents the **real production database environment**.
+### H2 (In-Memory Mode)
 
----
+H2 is used for testing and development. It runs completely in memory, so any data stored in it will reset whenever the application restarts.
+
+Run the backend using:
+
+```
+./mvnw spring-boot:run -Dspring-boot.run.profiles=h2
+```
+
+This mode is mainly useful for development and integration testing.
+
+### Switching Between Databases
+
+The application switches between databases using **Spring profiles**. This makes it easy to run the same application with either the persistent database or the in-memory database without changing the code.
 
 ### Default Data
 
-Both database modes automatically load the same **default sample data** when the database is empty.  
-This allows the application to be tested immediately after startup without manually entering data.
+When the application starts and the database is empty, some sample data is automatically loaded. This allows the system to be tested immediately without having to manually add data first.
 
 ---
 
