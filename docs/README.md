@@ -185,15 +185,22 @@ The integration tests include:
 - `BudgetRepositoryIntegrationTest`
 - `ExpenseRepositoryIntegrationTest`
 
+### Test Structure
+
+The tests are organized into separate folders for unit tests and integration tests.
+
+```
+src/test/java/com/yorku/budgettracker/budgettracker
+ ├── service
+ │    └── BudgetServiceTest.java
+ └── integration
+      ├── BudgetRepositoryIntegrationTest.java
+      └── ExpenseRepositoryIntegrationTest.java
+```
+
+- The **service** folder contains unit tests for the business logic.
+- The **integration** folder contains tests that interact with the database.
+
 These tests verify that data can be saved and retrieved correctly from the database.
 
-### Running Tests
-
-All tests can be run using Maven:
-
-```
-./mvnw test
-```
-
-This will run both the unit tests and the integration tests.
 
