@@ -132,6 +132,52 @@ Both modes load the same sample data when the database is empty.
 
 ---
 
+## Switching Between Databases
+
+The application supports both a **persistent database** and a **stub (in-memory) database**.
+
+This is done using **Spring profiles**, which allows the data source to be switched with a single command when starting the backend.
+
+### H2 Stub Database (Testing Mode)
+
+This mode uses an **in-memory H2 database**.  
+Data is temporary and resets whenever the application restarts.
+
+Run using:
+
+```
+./mvnw spring-boot:run -Dspring-boot.run.profiles=h2
+```
+
+This mode is useful for:
+- testing
+- development
+- integration tests
+
+---
+
+### PostgreSQL Persistent Database
+
+This mode uses **PostgreSQL** as the real database.  
+Data is stored permanently.
+
+Run using:
+
+```
+./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres
+```
+
+This mode represents the **real production database environment**.
+
+---
+
+### Default Data
+
+Both database modes automatically load the same **default sample data** when the database is empty.  
+This allows the application to be tested immediately after startup without manually entering data.
+
+---
+
 ## Running Tests
 
 Backend tests can be run using:
