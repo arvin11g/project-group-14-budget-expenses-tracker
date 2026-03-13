@@ -91,3 +91,31 @@ This helped us make sure Iteration 1 was stable and fully functional instead of 
 - Basic GUI working.
 - Jira updated.
 - Repository tagged as `ITR1`.
+
+---
+## March 09, 2026 – Iteration 2 Backend Progress
+**Attendees:** Iyinoluwa Blossom Olu-Alabi
+
+### Work Completed
+- Added PostgreSQL configuration so the app can run with a real database.
+- Kept the H2 in-memory database so the system can still run with a stub database.
+- Verified that the database can switch between H2 and PostgreSQL using Spring profiles.
+- Confirmed that the `budget` and `expense` tables are created correctly in PostgreSQL.
+- Updated `BudgetService` so it works with the database instead of the in-memory store.
+- Added an endpoint to get a summary for a term (total expenses, remaining balance, and if the user is over budget).
+- Added validation improvements to the `Expense` model.
+- Added a global exception handler to return cleaner error messages for validation errors.
+- Updated the frontend dashboard to use the backend summary endpoint.
+- Added an over-budget warning on the dashboard.
+- Added an integration test for the `BudgetRepository`.
+
+### Local Testing
+- Ran backend using the H2 profile successfully.
+- Ran backend using the PostgreSQL profile successfully.
+- Confirmed that the `budget` and `expense` tables appear in PostgreSQL.
+- Ran `./mvnw test` and all tests passed.
+- Ran the frontend and confirmed the dashboard loads and data displays correctly.
+
+### Notes
+- PostgreSQL will be used as the persistent database for Iteration 2.
+- H2 is still included so the project can run with a stub database for testing.
