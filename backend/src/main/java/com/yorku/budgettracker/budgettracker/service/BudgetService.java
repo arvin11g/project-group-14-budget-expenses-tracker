@@ -4,24 +4,24 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.yorku.budgettracker.budgettracker.data.ExpenseDataAccess;
 import com.yorku.budgettracker.budgettracker.model.Expense;
-import com.yorku.budgettracker.budgettracker.repository.ExpenseRepository;
 
 @Service
 public class BudgetService {
 
-    private final ExpenseRepository expenseRepository;
+    private final ExpenseDataAccess expenseDataAccess;
 
-    public BudgetService(ExpenseRepository expenseRepository) {
-        this.expenseRepository = expenseRepository;
+    public BudgetService(ExpenseDataAccess expenseDataAccess) {
+        this.expenseDataAccess = expenseDataAccess;
     }
 
     public void addExpense(Expense expense) {
-        expenseRepository.save(expense);
+        expenseDataAccess.save(expense);
     }
 
     public List<Expense> getExpensesForTerm(String academicTerm) {
-        return expenseRepository.findByAcademicTerm(academicTerm);
+        return expenseDataAccess.findByAcademicTerm(academicTerm);
     }
 
     public double getTotalExpensesForTerm(String academicTerm) {
