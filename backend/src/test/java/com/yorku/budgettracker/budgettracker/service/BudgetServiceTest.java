@@ -10,8 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.yorku.budgettracker.budgettracker.data.StubExpenseDataAccess;
 import com.yorku.budgettracker.budgettracker.model.Expense;
-//import com.yorku.budgettracker.budgettracker.stub.InMemoryExpenseStore;
 
 @ActiveProfiles("stub")
 public class BudgetServiceTest {
@@ -20,7 +20,26 @@ public class BudgetServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new BudgetService(new com.yorku.budgettracker.budgettracker.data.StubExpenseDataAccess());    }
+        service = new BudgetService(new StubExpenseDataAccess());
+    }
+
+    @Test
+    void addExpense_addsExpenseToCorrectTerm() {
+        int before = service.getExpensesForTerm("Winter 2026").size();
+
+        service.addExpense(
+                new Expense(
+                        "Food",
+                        "Groceries",
+                        100,
+                        LocalDate.now(),
+                        "Winter 2026"
+                )
+        );
+
+        int after = service.getExpensesForTerm("Winter 2026").size();
+        assertEquals(before + 1, after);
+    }
 
     @Test
     void totalExpenses_isCalculatedCorrectly() {
@@ -35,7 +54,7 @@ public class BudgetServiceTest {
         );
 
         double total = service.getTotalExpensesForTerm("Winter 2026");
-        assertTrue(total >= 100);
+        assertEquals(1300, total, 0.001);
     }
 
     @Test
@@ -50,8 +69,8 @@ public class BudgetServiceTest {
                 )
         );
 
-        double remaining = service.getRemainingBalance("Winter 2026", 200);
-        assertTrue(remaining <= 150);
+        double remaining = service.getRemainingBalance("Winter 2026", 2000);
+        assertEquals(750, remaining, 0.001);
     }
 
     @Test

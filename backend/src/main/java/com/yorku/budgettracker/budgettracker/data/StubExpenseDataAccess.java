@@ -9,7 +9,7 @@ import com.yorku.budgettracker.budgettracker.model.Expense;
 import com.yorku.budgettracker.budgettracker.stub.InMemoryExpenseStore;
 
 @Component
-@Profile("h2")
+@Profile({"h2", "default"})
 public class StubExpenseDataAccess implements ExpenseDataAccess {
 
     private final InMemoryExpenseStore store = new InMemoryExpenseStore();
