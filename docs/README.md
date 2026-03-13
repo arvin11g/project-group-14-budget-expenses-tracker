@@ -163,15 +163,37 @@ BudgetService depends only on the interface, allowing the database implementatio
 
 ---
 
-## Running Tests
+## Testing
 
-Backend tests can be run using:
+The project includes both unit tests and integration tests.
 
+### Unit Tests
+
+Unit tests are used to test the business logic in the service layer. These tests use the stub (in-memory) database so the logic can be tested without relying on a real database.
+
+For example, `BudgetServiceTest` checks things like:
+- adding expenses
+- calculating total expenses for a term
+- calculating remaining balance
+- checking if a budget has been exceeded
+
+### Integration Tests
+
+Integration tests are used to test the persistence layer with a real database. These tests run using the H2 in-memory database, which behaves like a real SQL database but does not require PostgreSQL to be running.
+
+The integration tests include:
+- `BudgetRepositoryIntegrationTest`
+- `ExpenseRepositoryIntegrationTest`
+
+These tests verify that data can be saved and retrieved correctly from the database.
+
+### Running Tests
+
+All tests can be run using Maven:
+
+```
 ./mvnw test
+```
 
-The project includes:
-- Unit tests for the service layer
-- Integration tests for database operations
-
----
+This will run both the unit tests and the integration tests.
 
