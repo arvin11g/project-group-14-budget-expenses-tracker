@@ -144,7 +144,3 @@ The project includes:
 
 ---
 
-## Team
-
-York University – EECS  
-Group 14
