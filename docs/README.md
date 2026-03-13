@@ -150,6 +150,17 @@ The application switches between databases using **Spring profiles**. This makes
 
 When the application starts and the database is empty, some sample data is automatically loaded. This allows the system to be tested immediately without having to manually add data first.
 
+To support both the real database and the stub database, the application uses a common interface:
+
+ExpenseDataAccess
+
+Two implementations are provided:
+
+- DbExpenseDataAccess – uses PostgreSQL through Spring Data JPA
+- StubExpenseDataAccess – uses the original InMemoryExpenseStore
+
+BudgetService depends only on the interface, allowing the database implementation to be switched using Spring profiles.
+
 ---
 
 ## Running Tests
