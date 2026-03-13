@@ -1,22 +1,31 @@
 package com.yorku.budgettracker.budgettracker.controller;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.yorku.budgettracker.budgettracker.exception.ExpenseNotFoundException;
 import com.yorku.budgettracker.budgettracker.model.Expense;
 import com.yorku.budgettracker.budgettracker.repository.ExpenseRepository;
 
 import jakarta.validation.Valid;
-
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 
 @RestController
 @RequestMapping("/api/expenses")
@@ -41,11 +50,30 @@ public class ExpenseController {
         return ResponseEntity.ok(page);
     }
 
-
     // GET /api/expenses/term/{term}
     @GetMapping("/term/{term}")
     public ResponseEntity<List<Expense>> getExpensesByTerm(@PathVariable String term) {
         return ResponseEntity.ok(expenseRepository.findByAcademicTerm(term));
+    }
+
+    // Requirement: View all expenses for a selected term (Chronological)
+    @GetMapping("/term/{term}/chronological")
+    public ResponseEntity<List<Expense>> getExpensesByTermChronological(@PathVariable String term) {
+        List<Expense> expenses = expenseRepository.findByAcademicTerm(term);
+        expenses.sort((e1, e2) -> e1.getDate().compareTo(e2.getDate()));
+        return ResponseEntity.ok(expenses);
+    }
+
+    // Requirement: View expenses grouped by category for a term
+    @GetMapping("/term/{term}/grouped")
+    public ResponseEntity<Map<String, Double>> getExpensesByTermGrouped(@PathVariable String term) {
+        List<Expense> expenses = expenseRepository.findByAcademicTerm(term);
+        Map<String, Double> groupedExpenses = expenses.stream()
+            .collect(Collectors.groupingBy(
+                Expense::getCategory,
+                Collectors.summingDouble(Expense::getAmount)
+            ));
+        return ResponseEntity.ok(groupedExpenses);
     }
 
     // POST /api/expenses
@@ -98,11 +126,11 @@ public class ExpenseController {
     
     @GetMapping("/category/{category}")
     public ResponseEntity<List<Expense>> getExpensesByCategory(@PathVariable String category) {
+        // Fixed: Replaced undefined getCategory() with findByCategory()
         List<Expense> expenses = expenseRepository.findByCategory(category);
         return ResponseEntity.ok(expenses);
     }
 
-    
     @GetMapping("/date-range")
     public ResponseEntity<List<Expense>> getExpensesByDateRange(
         @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
@@ -147,5 +175,4 @@ public class ExpenseController {
         public String getCategory() { return category; }
         public Double getTotalAmount() { return totalAmount; }
     }
-
 }
