@@ -2,23 +2,26 @@ package com.yorku.budgettracker.budgettracker.service;
 
 import java.util.List;
 
-import com.yorku.budgettracker.budgettracker.model.Expense;
-import com.yorku.budgettracker.budgettracker.stub.ExpenseStore;
+import org.springframework.stereotype.Service;
 
+import com.yorku.budgettracker.budgettracker.model.Expense;
+import com.yorku.budgettracker.budgettracker.repository.ExpenseRepository;
+
+@Service
 public class BudgetService {
 
-    private final ExpenseStore expenseStore;
+    private final ExpenseRepository expenseRepository;
 
-    public BudgetService(ExpenseStore expenseStore) {
-        this.expenseStore = expenseStore;
+    public BudgetService(ExpenseRepository expenseRepository) {
+        this.expenseRepository = expenseRepository;
     }
 
     public void addExpense(Expense expense) {
-        expenseStore.add(expense);
+        expenseRepository.save(expense);
     }
 
     public List<Expense> getExpensesForTerm(String academicTerm) {
-        return expenseStore.findByAcademicTerm(academicTerm);
+        return expenseRepository.findByAcademicTerm(academicTerm);
     }
 
     public double getTotalExpensesForTerm(String academicTerm) {

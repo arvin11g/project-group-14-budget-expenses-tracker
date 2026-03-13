@@ -1,5 +1,6 @@
 package com.yorku.budgettracker.budgettracker.controller;
-
+import com.yorku.budgettracker.budgettracker.service.BudgetService;
+import com.yorku.budgettracker.budgettracker.dto.TermSummary;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +19,11 @@ import com.yorku.budgettracker.budgettracker.repository.BudgetRepository;
 public class BudgetController {
 
     private final BudgetRepository budgetRepository;
+    private final BudgetService budgetService;
 
-    public BudgetController(BudgetRepository budgetRepository) {
+    public BudgetController(BudgetRepository budgetRepository, BudgetService budgetService) {
         this.budgetRepository = budgetRepository;
+        this.budgetService = budgetService;
     }
 
     @GetMapping("/term/{term}")
@@ -40,4 +43,25 @@ public class BudgetController {
         
         return ResponseEntity.ok(budgetRepository.save(existingBudget));
     }
+    @GetMapping("/term/{term}/summary")
+    public ResponseEntity<?> getTermSummary(@PathVariable String term) {
+
+        Budget budget = budgetRepository.findByAcademicTerm(term)
+                .orElse(new Budget(term, 0.0));
+
+        double totalExpenses = budgetService.getTotalExpensesForTerm(term);
+        double remaining = budgetService.getRemainingBalance(term, budget.getAmount());
+        boolean overBudget = budgetService.isOverBudget(term, budget.getAmount());
+
+        return ResponseEntity.ok(
+                new TermSummary(
+                        term,
+                        budget.getAmount(),
+                        totalExpenses,
+                        remaining,
+                        overBudget
+                )
+        );
+    }
+
 }
