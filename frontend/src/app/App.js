@@ -5,6 +5,7 @@ import Budgets from "./Budgets";
 import Expenses from "./Expenses";
 import Charts from "./Charts";
 import Profile from "./Profile";
+import YorkCostEstimator from "./YorkCostEstimator";
 import "./App.css";
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/charts" element={<Charts />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/york-cost-estimator" element={<YorkCostEstimator />} />
         </Routes>
       </div>
     </div>
