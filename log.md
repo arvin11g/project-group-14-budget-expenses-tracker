@@ -93,29 +93,140 @@ This helped us make sure Iteration 1 was stable and fully functional instead of 
 - Repository tagged as `ITR1`.
 
 ---
-## March 09, 2026 – Iteration 2 Backend Progress
-**Attendees:** Iyinoluwa Blossom Olu-Alabi
+### March 3, 2026 – Iteration 2 Backend Preparation
+Attendees: Iyinoluwa Blossom Olu-Alabi
 
-### Work Completed
-- Added PostgreSQL configuration so the app can run with a real database.
-- Kept the H2 in-memory database so the system can still run with a stub database.
-- Verified that the database can switch between H2 and PostgreSQL using Spring profiles.
-- Confirmed that the `budget` and `expense` tables are created correctly in PostgreSQL.
-- Updated `BudgetService` so it works with the database instead of the in-memory store.
-- Added an endpoint to get a summary for a term (total expenses, remaining balance, and if the user is over budget).
-- Added validation improvements to the `Expense` model.
-- Added a global exception handler to return cleaner error messages for validation errors.
+**Work Completed**
+- Added PostgreSQL configuration so the application can run with a real persistent database.
+- Kept the H2 in-memory database so the system can still run using a stub database.
+- Verified that Spring profiles can switch between H2 and PostgreSQL.
+- Confirmed that the budget and expense tables are created correctly in PostgreSQL.
+
+**Local Testing**
+- Ran backend locally using the H2 profile.
+- Ran backend locally using the PostgreSQL profile.
+- Confirmed that the tables appear correctly in PostgreSQL.
+
+**Notes**
+- This step was mainly to make sure the system supports both stub and persistent databases before adding more features.
+
+---
+
+### March 4, 2026 – Service Layer Updates
+Attendees: Iyinoluwa Blossom Olu-Alabi
+
+**Work Completed**
+- Updated BudgetService so it works with the database implementation instead of only the in-memory store.
+- Added an endpoint to return a summary for a term including total expenses, remaining balance, and over-budget status.
+- Improved validation in the Expense model.
+- Added a global exception handler to return clearer validation error messages.
+
+**Local Testing**
+- Tested the summary endpoint with sample data and verified the responses were correct.
+
+**Notes**
+- These changes made the backend cleaner and improved the API responses.
+
+---
+
+### March 5, 2026 – Frontend Dashboard Improvements
+Attendees: Iyinoluwa Blossom Olu-Alabi
+
+**Work Completed**
 - Updated the frontend dashboard to use the backend summary endpoint.
 - Added an over-budget warning on the dashboard.
-- Added an integration test for the `BudgetRepository`.
+- Improved the dashboard layout so budget summaries are easier to read.
 
-### Local Testing
-- Ran backend using the H2 profile successfully.
-- Ran backend using the PostgreSQL profile successfully.
-- Confirmed that the `budget` and `expense` tables appear in PostgreSQL.
-- Ran `./mvnw test` and all tests passed.
-- Ran the frontend and confirmed the dashboard loads and data displays correctly.
+**Local Testing**
+- Ran the frontend locally and confirmed the dashboard loads and displays data correctly.
 
-### Notes
-- PostgreSQL will be used as the persistent database for Iteration 2.
-- H2 is still included so the project can run with a stub database for testing.
+**Notes**
+- The dashboard now gives better financial feedback to the user.
+
+---
+
+### March 6, 2026 – Testing Implementation
+Attendees: Iyinoluwa Blossom Olu-Alabi
+
+**Work Completed**
+- Added unit tests for BudgetService.
+- Configured tests to run using the stub data access implementation.
+- Added an integration test for the BudgetRepository to verify database operations.
+- Separated unit tests and integration tests into different folders.
+
+**Local Testing**
+- Ran `./mvnw test` and confirmed that all tests passed.
+- Verified repository operations using the H2 database profile.
+
+**Notes**
+- Testing now covers both the service layer and the persistence layer.
+
+---
+
+### March 7, 2026 – Charts and Financial Insights
+Attendees: Iyinoluwa Blossom Olu-Alabi
+
+**Work Completed**
+- Implemented a charts page to visualize spending data.
+- Added a category-based spending chart.
+- Added a financial health score to give students a quick idea of how they are doing financially.
+- Connected the charts to backend expense data.
+
+**Local Testing**
+- Added sample expenses and verified that the charts update correctly.
+
+**Notes**
+- This made the app easier to understand since users can now see their spending visually instead of only looking at numbers.
+
+---
+
+### March 8, 2026 – Profile and Currency Features
+Attendees: Iyinoluwa Blossom Olu-Alabi
+
+**Work Completed**
+- Added a user profile page for storing user preferences.
+- Implemented currency selection so users can choose their home currency.
+- Added currency conversion so expenses can be displayed in another currency.
+- Connected profile settings to the rest of the application.
+
+**Local Testing**
+- Tested different currencies and confirmed values update correctly.
+
+**Notes**
+- This feature is especially useful for international students.
+
+---
+
+### March 9, 2026 – York University Cost Estimator
+Attendees: Iyinoluwa Blossom Olu-Alabi
+
+**Work Completed**
+- Implemented a York University tuition cost estimator based on program and student type.
+- Created tuition data structures using York per-credit tuition values.
+- Implemented a residence cost estimator using York housing rates.
+- Added residence buildings, room types, dining plans, and additional residence fees.
+- Added a cost breakdown that includes tuition, housing, dining, books, and additional fees.
+
+**Local Testing**
+- Verified that tuition calculations match York per-credit values.
+- Tested residence calculations using different buildings and room types.
+
+**Notes**
+- This feature was added after feedback from the first presentation to give the project a stronger selling point specifically for York students.
+
+---
+
+### March 10, 2026 – Documentation Updates
+Attendees: Iyinoluwa Blossom Olu-Alabi
+
+**Work Completed**
+- Updated the project README with database setup instructions.
+- Updated the GitHub Wiki with Iteration 2 changes and new system features.
+- Revised planning documentation with updated user stories and costs.
+- Updated the architecture diagram and UML diagrams.
+
+**Local Testing**
+- Reviewed the application to make sure all features work properly before submission.
+
+**Notes**
+- This step was mainly for final documentation and getting everything ready for submission.
