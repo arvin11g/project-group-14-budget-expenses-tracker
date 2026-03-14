@@ -240,7 +240,7 @@ For this iteration I moved the system to a real persistent database using Postgr
 
 I also kept the H2 in-memory database so the system can still run in a stub/testing mode. This makes development easier because the database resets automatically and does not require setup. The system switches between H2 and PostgreSQL using Spring profiles.
 
----
+
 
 **Creating a common data access interface**
 
@@ -251,7 +251,7 @@ To support both the stub database and the real database, I created a common `Exp
 
 This way the service layer always talks to the same interface regardless of where the data is coming from. It also makes testing easier because the stub version can be injected during unit tests.
 
----
+
 
 **Keeping the system layered**
 
@@ -259,7 +259,7 @@ The project follows a layered structure with controllers, services, and a data a
 
 Keeping these parts separate makes the system easier to maintain and also easier to test since the business logic can run without depending directly on the database.
 
----
+
 
 **Adding the York University cost estimator**
 
@@ -267,7 +267,7 @@ During the first presentation the professor mentioned that there are already man
 
 Based on that feedback I added a York University cost estimator. This feature lets York students estimate their costs by combining tuition, residence housing, dining plans, and other required fees. The goal was to make the application more useful specifically for York students rather than just being another generic expense tracker.
 
----
+
 
 **Adding currency conversion for international students**
 
