@@ -27,6 +27,7 @@ function YorkCostEstimator() {
   const [selectedRoomType, setSelectedRoomType] = useState(
     yorkResidenceData.residences?.[0]?.options?.[0]?.roomType || ""
   );
+  const [selectedDiningPlan, setSelectedDiningPlan] = useState("Entry");
 
   const homeCurrency = getHomeCurrency();
 
@@ -64,6 +65,14 @@ function YorkCostEstimator() {
     return roomOptions.find((r) => r.roomType === selectedRoomType);
   }, [roomOptions, selectedRoomType]);
 
+  const diningPlanOptions = yorkResidenceData.diningPlans || [];
+
+  const currentDiningPlan = useMemo(() => {
+    return diningPlanOptions.find((plan) => plan.name === selectedDiningPlan);
+  }, [diningPlanOptions, selectedDiningPlan]);
+
+  const isDiningRequired = currentRoom?.diningRequired === true;
+
   const perCreditFees = currentProgram?.feesPerCredit?.[studentType] || {
     tuition: 0,
     supplementary: 0,
@@ -80,7 +89,9 @@ function YorkCostEstimator() {
   const residenceAdminFee =
     yorkResidenceData.additionalFees?.residenceLifeActivityAndAdministrationFee || 0;
 
-  const housingTotal = residenceRate + applicationFee + residenceAdminFee;
+  const diningCost = currentDiningPlan?.cost || 0;
+
+  const housingTotal = residenceRate + diningCost + applicationFee + residenceAdminFee;
   const upfrontTotal = applicationFee + roomDeposit + residenceAdminFee;
   const estimatedTotalLow = tuitionTotal + booksLow + housingTotal;
   const estimatedTotalHigh = tuitionTotal + booksHigh + housingTotal;
@@ -121,6 +132,28 @@ function YorkCostEstimator() {
 
     setSelectedResidence(value);
     setSelectedRoomType(newRoom?.roomType || "");
+
+    if (newRoom?.diningRequired) {
+      setSelectedDiningPlan("Entry");
+    } else {
+      setSelectedDiningPlan("None");
+    }
+  };
+
+  const handleRoomTypeChange = (value) => {
+    const newRoom = roomOptions.find((room) => room.roomType === value);
+
+    setSelectedRoomType(value);
+
+    if (newRoom?.diningRequired) {
+      if (selectedDiningPlan === "None") {
+        setSelectedDiningPlan("Entry");
+      }
+    } else {
+      if (!selectedDiningPlan) {
+        setSelectedDiningPlan("None");
+      }
+    }
   };
 
   return (
@@ -228,7 +261,7 @@ function YorkCostEstimator() {
           <Field label="Room Type">
             <select
               value={selectedRoomType}
-              onChange={(e) => setSelectedRoomType(e.target.value)}
+              onChange={(e) => handleRoomTypeChange(e.target.value)}
               style={inputStyle}
             >
               {roomOptions.map((room) => (
@@ -236,6 +269,22 @@ function YorkCostEstimator() {
                   {room.roomType}
                 </option>
               ))}
+            </select>
+          </Field>
+
+          <Field label={isDiningRequired ? "Dining Plan (Required)" : "Dining Plan (Optional)"}>
+            <select
+              value={selectedDiningPlan}
+              onChange={(e) => setSelectedDiningPlan(e.target.value)}
+              style={inputStyle}
+            >
+              {diningPlanOptions
+                .filter((plan) => (isDiningRequired ? plan.name !== "None" : true))
+                .map((plan) => (
+                  <option key={plan.name} value={plan.name}>
+                    {plan.name}
+                  </option>
+                ))}
             </select>
           </Field>
         </div>
@@ -273,6 +322,10 @@ function YorkCostEstimator() {
           <div style={infoRowStyle}>
             <span>Residence rate</span>
             <strong>{formatCurrency(residenceRate)}</strong>
+          </div>
+          <div style={infoRowStyle}>
+            <span>Dining plan</span>
+            <strong>{formatCurrency(diningCost)}</strong>
           </div>
           <div style={infoRowStyle}>
             <span>Application fee</span>
@@ -319,6 +372,12 @@ function YorkCostEstimator() {
           </p>
           <p>
             <strong>Residence source year:</strong> {yorkResidenceData.year}
+          </p>
+          <p>
+            <strong>Dining plan:</strong>{" "}
+            {isDiningRequired
+              ? "Required for this room type."
+              : "Optional for this room type."}
           </p>
           <p>
             <strong>Note:</strong> The room deposit is shown separately because it is an upfront payment.
