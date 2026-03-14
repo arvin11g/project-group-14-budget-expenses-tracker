@@ -230,3 +230,51 @@ Attendees: Iyinoluwa Blossom Olu-Alabi
 
 **Notes**
 - This step was mainly for final documentation and getting everything ready for submission.
+
+
+### Major Design Decisions
+
+**Using PostgreSQL as the main database**
+
+For this iteration I moved the system to a real persistent database using PostgreSQL. Before this the system was only using an in-memory database, which means all the data disappears when the application restarts. PostgreSQL allows the data to actually be stored permanently.
+
+I also kept the H2 in-memory database so the system can still run in a stub/testing mode. This makes development easier because the database resets automatically and does not require setup. The system switches between H2 and PostgreSQL using Spring profiles.
+
+---
+
+**Creating a common data access interface**
+
+To support both the stub database and the real database, I created a common `ExpenseDataAccess` interface. Then I implemented two versions of it:
+
+- `StubExpenseDataAccess`
+- `DatabaseExpenseDataAccess`
+
+This way the service layer always talks to the same interface regardless of where the data is coming from. It also makes testing easier because the stub version can be injected during unit tests.
+
+---
+
+**Keeping the system layered**
+
+The project follows a layered structure with controllers, services, and a data access layer. The controllers handle the API endpoints, the service layer contains the business logic, and the data layer handles the database operations.
+
+Keeping these parts separate makes the system easier to maintain and also easier to test since the business logic can run without depending directly on the database.
+
+---
+
+**Adding the York University cost estimator**
+
+During the first presentation the professor mentioned that there are already many budgeting apps and asked what makes this project unique.
+
+Based on that feedback I added a York University cost estimator. This feature lets York students estimate their costs by combining tuition, residence housing, dining plans, and other required fees. The goal was to make the application more useful specifically for York students rather than just being another generic expense tracker.
+
+---
+
+**Adding currency conversion for international students**
+
+York has a lot of international students, so I added a currency preference option in the profile page. The app still stores everything in CAD, but students can also view the values converted to their home currency. This helps them understand their spending better.
+
+---
+
+**Adding charts and financial insights**
+
+Instead of only showing numbers, I added charts and a financial health score to the dashboard. This makes it easier for users to quickly see where their money is going and whether they are staying within their budget.
