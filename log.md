@@ -283,3 +283,23 @@ Instead of only showing numbers, I added charts and a financial health score to 
 ---
 ## Next Steps For ITER3
 The York Cost Estimator feature is still in progress and will continue to be expanded in future iterations. Right now it supports a few faculties and programs, but the goal is to eventually include all York programs so students can get a more accurate estimate of their tuition. I also plan to add a mode where the estimated tuition and housing costs can automatically feed into the budgeting part of the app, so students can plan their finances more realistically based on their actual school expenses. Another improvement would be allowing students to compare different residence options, meal plans, and credit loads to see how their total costs change. This feature is intended to make the budgeting tool more useful specifically for York students since it connects real university costs with the budgeting system.
+
+
+
+---
+### March 15th, 2026 
+Attendees: Iyinoluwa Blossom Olu-Alabi
+
+**Design Changes?**
+- For the currency conversion - Currently, the conversion rates are fixed. Should I be pulling it from a data source instead?
+- Scrape the data for the residnce rates and tuition or type them in manually?
+- Might have to redefine one big user story , changing the target audience to York students.
+
+
+
+
+
+
+
+
+
