@@ -94,7 +94,7 @@ This helped us make sure Iteration 1 was stable and fully functional instead of 
 
 ---
 ### March 3, 2026 – Iteration 2 Backend Preparation
-Attendees: Iyinoluwa Blossom Olu-Alabi
+Attendees: Iyinoluwa 
 
 **Work Completed**
 - Added PostgreSQL configuration so the application can run with a real persistent database.
@@ -113,8 +113,7 @@ Attendees: Iyinoluwa Blossom Olu-Alabi
 ---
 
 ### March 4, 2026 – Service Layer Updates
-Attendees: Iyinoluwa Blossom Olu-Alabi
-
+Attendees: Iyinoluwa
 **Work Completed**
 - Updated BudgetService so it works with the database implementation instead of only the in-memory store.
 - Added an endpoint to return a summary for a term including total expenses, remaining balance, and over-budget status.
@@ -130,7 +129,7 @@ Attendees: Iyinoluwa Blossom Olu-Alabi
 ---
 
 ### March 5, 2026 – Frontend Dashboard Improvements
-Attendees: Iyinoluwa Blossom Olu-Alabi
+Attendees: Iyinoluwa 
 
 **Work Completed**
 - Updated the frontend dashboard to use the backend summary endpoint.
@@ -146,7 +145,7 @@ Attendees: Iyinoluwa Blossom Olu-Alabi
 ---
 
 ### March 6, 2026 – Testing Implementation
-Attendees: Iyinoluwa Blossom Olu-Alabi
+Attendees: Iyinoluwa 
 
 **Work Completed**
 - Added unit tests for BudgetService.
@@ -164,7 +163,7 @@ Attendees: Iyinoluwa Blossom Olu-Alabi
 ---
 
 ### March 7, 2026 – Charts and Financial Insights
-Attendees: Iyinoluwa Blossom Olu-Alabi
+Attendees: Iyinoluwa 
 
 **Work Completed**
 - Implemented a charts page to visualize spending data.
@@ -181,7 +180,7 @@ Attendees: Iyinoluwa Blossom Olu-Alabi
 ---
 
 ### March 8, 2026 – Profile and Currency Features
-Attendees: Iyinoluwa Blossom Olu-Alabi
+Attendees: Iyinoluwa 
 
 **Work Completed**
 - Added a user profile page for storing user preferences.
@@ -198,7 +197,7 @@ Attendees: Iyinoluwa Blossom Olu-Alabi
 ---
 
 ### March 9, 2026 – York University Cost Estimator
-Attendees: Iyinoluwa Blossom Olu-Alabi
+Attendees: Iyinoluwa 
 
 **Work Completed**
 - Implemented a York University tuition cost estimator based on program and student type.
@@ -217,7 +216,7 @@ Attendees: Iyinoluwa Blossom Olu-Alabi
 ---
 
 ### March 10, 2026 – Documentation Updates
-Attendees: Iyinoluwa Blossom Olu-Alabi
+Attendees: Iyinoluwa 
 
 **Work Completed**
 - Updated the project README with database setup instructions.
@@ -288,7 +287,7 @@ The York Cost Estimator feature is still in progress and will continue to be exp
 
 ---
 ### March 15th, 2026 
-Attendees: Iyinoluwa Blossom Olu-Alabi
+Attendees: Iyinoluwa  
 
 **Design Changes?**
 - For the currency conversion - Currently, the conversion rates are fixed. Should I be pulling it from a data source instead?
@@ -298,17 +297,29 @@ Attendees: Iyinoluwa Blossom Olu-Alabi
 
 
 ### March 23, 2026 – Iteration 3 Progress
-Attendees: Iyinoluwa Blossom Olu-Alabi
+Attendees: Iyinoluwa 
 
 Work Completed
 - Connected the York Cost Estimator to the budgeting system.
 - Added planned expenses (PLANNED vs ACTUAL).
 - Added “Add to Budget” button to the estimator.
-- Update the dashboard 
+- Update the dashboard
 - Fixed issue with term mismatch so planned values show correctly.
 
 
 This feature makes the estimator more useful  to students since it now helps with planning, not just showing costs.
+
+---
+### March 24,2026 
+Attendees - Iyinoluwa
+
+Work Completed:
+Refactoring:
+Refactoring 1: Move York estimator calculation logic out of the UI
+Refactoring 2: Make controllers consistently go through the service layer instead of calling the repositories.
+Refactoring 3: Centralize planned vs actual handling
+
+
 
 
 
