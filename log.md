@@ -297,7 +297,18 @@ Attendees: Iyinoluwa Blossom Olu-Alabi
 
 
 
+### March 23, 2026 – Iteration 3 Progress
+Attendees: Iyinoluwa Blossom Olu-Alabi
 
+Work Completed
+- Connected the York Cost Estimator to the budgeting system.
+- Added planned expenses (PLANNED vs ACTUAL).
+- Added “Add to Budget” button to the estimator.
+- Update the dashboard 
+- Fixed issue with term mismatch so planned values show correctly.
+
+
+This feature makes the estimator more useful  to students since it now helps with planning, not just showing costs.
 
 
 
