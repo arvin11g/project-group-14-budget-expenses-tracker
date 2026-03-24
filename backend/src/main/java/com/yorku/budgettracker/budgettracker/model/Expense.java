@@ -14,8 +14,9 @@ public class Expense {
 	@NotBlank(message = "category is required")
 	private String category; // e.g.: tuition, textbooks, rent
 	
-	private String description; 
-	
+	private String description;
+
+	private String type;
 	@Positive(message = "Amount must be Positive")
 	private double amount;
 	
@@ -83,6 +84,13 @@ public class Expense {
 	
 	public long getId() {
 	    return id;
+	}
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
     
 }

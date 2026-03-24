@@ -17,6 +17,9 @@ public class BudgetService {
     }
 
     public void addExpense(Expense expense) {
+        if (expense.getType() == null) {
+            expense.setType("ACTUAL");
+        }
         expenseDataAccess.save(expense);
     }
 
