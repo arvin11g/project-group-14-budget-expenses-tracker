@@ -30,7 +30,7 @@ From this discussion, we confirmed that our system should:
 ---
 
 ## Late January – Vision & Big User Stories (Discord Discussions)  
-**Attendees:** Dexter Sargent, Iyinoluwa Blossom Olu-Alabi, Ayesh Ahmed, Arvin Gholipoor  
+
 
 We finalized the vision statement and defined four main feature categories for the full project:
 
@@ -46,7 +46,7 @@ We also agreed to follow a simple 3-layer structure (controller, service, reposi
 ---
 
 ## Feb 9, 2026 – Backend & Logic Setup  
-**Attendees:** Dexter Sargent, Iyinoluwa Blossom Olu-Alabi, Ayesh Ahmed, Arvin Gholipoor  
+
 
 We started implementing the core functionality for Iteration 1.
 
@@ -64,7 +64,7 @@ We ran `./mvnw test` and confirmed that everything passed.
 ---
 
 ## Feb 11, 2026 – Basic GUI & Final Checks  
-**Attendees:** Dexter Sargent, Iyinoluwa Blossom Olu-Alabi, Ayesh Ahmed, Arvin Gholipoor  
+
 
 We created a basic GUI page and connected it using a HomeController.
 
