@@ -10,6 +10,7 @@ function Dashboard() {
   const [totalBudget, setTotalBudget] = useState(0);
   const [totalSpent, setTotalSpent] = useState(0);
   const [recentExpenses, setRecentExpenses] = useState([]);
+  const [expenses, setExpenses] = useState([]);
   const [editingBudget, setEditingBudget] = useState(false);
   const [budgetInput, setBudgetInput] = useState("");
   const [loading, setLoading] = useState(true);
@@ -22,7 +23,6 @@ function Dashboard() {
     try {
       setLoading(true);
 
-
       // Expenses
    const [expensesRes, summaryRes] = await Promise.allSettled([
      expenseAPI.getExpensesByTerm(selectedTerm),
@@ -30,8 +30,9 @@ function Dashboard() {
    ]);
 
    // Expenses
-   const expenses = expensesRes.status === "fulfilled" ? expensesRes.value.data : [];
-   const sorted = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+   const expensesData = expensesRes.status === "fulfilled" ? expensesRes.value.data : [];
+   setExpenses(expensesData);
+   const sorted = [...expensesData].sort((a, b) => new Date(b.date) - new Date(a.date));
    setRecentExpenses(sorted.slice(0, 3));
 
    // Summary from backend
@@ -67,6 +68,10 @@ function Dashboard() {
   const remaining = totalBudget - totalSpent;
   const percentage = totalBudget > 0 ? Math.min((totalSpent / totalBudget) * 100, 100) : 0;
   const overBudget = totalSpent > totalBudget && totalBudget > 0;
+  const planned = expenses.filter((e) => e.type === "PLANNED");
+  const actual = expenses.filter((e) => e.type === "ACTUAL" || !e.type);
+  const plannedTotal = planned.reduce((sum, e) => sum + e.amount, 0);
+  const actualTotal = actual.reduce((sum, e) => sum + e.amount, 0);
 
   // Financial health calculation
   let healthScore = 0;
@@ -153,6 +158,11 @@ function Dashboard() {
             healthStatus === "Warning" ? "#f59e0b" :
             healthStatus === "Over Budget" ? "#ef4444" : undefined
           }
+        />
+        <SummaryCard
+          title="Planned vs Actual"
+          value={`Planned: ${formatCurrency(plannedTotal)}`}
+          subtitle={`Actual: ${formatCurrency(actualTotal)}`}
         />
       </div>
 

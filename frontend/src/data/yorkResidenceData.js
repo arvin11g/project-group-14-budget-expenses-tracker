@@ -57,9 +57,27 @@ const yorkResidenceData = {
       name: "Winters",
       diningRequired: true,
       options: [
-        { roomType: "Traditional Double", rate: 9194 },
-        { roomType: "Traditional Single", rate: 10838 },
-      ],
+        {
+          roomType: "Traditional Double",
+          rate: 9194,
+          diningRequired: true
+        },
+        {
+          roomType: "Traditional Single",
+          rate: 10838,
+          diningRequired: true
+        },
+        {
+          roomType: "Hybrid Double",
+          rate: 9612,
+          diningRequired: true
+        },
+        {
+          roomType: "Hybrid Single",
+          rate: 11290,
+          diningRequired: true
+        }
+      ]
     },
 
     // examples of residence types where dining is optional
@@ -77,6 +95,59 @@ const yorkResidenceData = {
         { roomType: "Suite Style ", rate: 13500 },
       ],
     },
+    {
+      name: "Stong",
+      diningRequired: true,
+      options: [
+        {
+          roomType: "Traditional Double",
+          rate: 9572,
+          diningRequired: true
+        },
+        {
+          roomType: "Traditional Single",
+          rate: 11282,
+          diningRequired: true
+        }
+      ]
+    },
+
+    {
+      name: "Tatham Hall",
+      diningRequired: true,
+      options: [
+        {
+          roomType: "Traditional Double",
+          rate: 9572,
+          diningRequired: true
+        },
+        {
+          roomType: "Traditional Single",
+          rate: 11282,
+          diningRequired: true
+        }
+      ]
+    },
+
+    {
+      name: "Vanier",
+      diningRequired: true,
+      options: [
+        {
+          roomType: "Traditional Double",
+          rate: 9572,
+          diningRequired: true
+        },
+        {
+          roomType: "Traditional Single",
+          rate: 11282,
+          diningRequired: true
+        }
+      ]
+    },
+
+
+
   ],
 
   diningPlans: [

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import yorkTuitionData from "../data/yorkTuitionData";
 import yorkResidenceData from "../data/yorkResidenceData";
+import expenseAPI from "../api/ExpensesAPI";
 import { formatCurrency, getHomeCurrency, convertFromCad } from "../utils/currency";
 
 function YorkCostEstimator() {
@@ -155,6 +156,32 @@ function YorkCostEstimator() {
       }
     }
   };
+  async function handleAddToBudget() {
+    try {
+      await expenseAPI.createExpense({
+        category: "Tuition",
+        description: `${selectedProgram} Tuition Estimate`,
+        amount: tuitionTotal,
+        academicTerm: "Winter 2026",
+        date: new Date().toISOString().split("T")[0],
+        type: "PLANNED"
+      });
+
+      await expenseAPI.createExpense({
+        category: "Housing",
+        description: `${selectedResidence} Housing Estimate`,
+        amount: housingTotal,
+        academicTerm: "Winter 2026",
+        date: new Date().toISOString().split("T")[0],
+        type: "PLANNED"
+      });
+
+      alert("Estimated costs added to budget successfully!");
+    } catch (error) {
+      console.error("Error adding estimated costs to budget:", error);
+      alert("Failed to add estimated costs to budget.");
+    }
+  }
 
   return (
     <div>
@@ -388,6 +415,22 @@ function YorkCostEstimator() {
             </p>
           )}
         </div>
+      </div>
+      <div style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end" }}>
+        <button
+          onClick={handleAddToBudget}
+          style={{
+            padding: "12px 18px",
+            background: "#2563eb",
+            color: "white",
+            border: "none",
+            borderRadius: "10px",
+            fontWeight: "600",
+            cursor: "pointer",
+          }}
+        >
+          Add to Budget
+        </button>
       </div>
     </div>
   );
