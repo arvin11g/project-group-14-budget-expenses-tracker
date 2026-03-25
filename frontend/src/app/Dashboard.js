@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import expenseAPI from "../api/ExpensesAPI";
 import budgetAPI from "../api/BudgetAPI";
 import { formatCurrency } from "../utils/currency";
+import { splitExpenses, calculateExpenseTotal } from "../utils/expenseUtils";
 
 const TERMS = ["Winter 2026", "Summer 2026", "Fall 2026", "Winter 2027"];
 
@@ -68,10 +69,9 @@ function Dashboard() {
   const remaining = totalBudget - totalSpent;
   const percentage = totalBudget > 0 ? Math.min((totalSpent / totalBudget) * 100, 100) : 0;
   const overBudget = totalSpent > totalBudget && totalBudget > 0;
-  const planned = expenses.filter((e) => e.type === "PLANNED");
-  const actual = expenses.filter((e) => e.type === "ACTUAL" || !e.type);
-  const plannedTotal = planned.reduce((sum, e) => sum + e.amount, 0);
-  const actualTotal = actual.reduce((sum, e) => sum + e.amount, 0);
+  const { planned, actual } = splitExpenses(expenses);
+  const plannedTotal = calculateExpenseTotal(planned);
+  const actualTotal = calculateExpenseTotal(actual);
 
   // Financial health calculation
   let healthScore = 0;

@@ -16,11 +16,11 @@ public class BudgetService {
         this.expenseDataAccess = expenseDataAccess;
     }
 
-    public void addExpense(Expense expense) {
+    public Expense addExpense(Expense expense) {
         if (expense.getType() == null) {
             expense.setType("ACTUAL");
         }
-        expenseDataAccess.save(expense);
+        return expenseDataAccess.save(expense);
     }
 
     public List<Expense> getExpensesForTerm(String academicTerm) {

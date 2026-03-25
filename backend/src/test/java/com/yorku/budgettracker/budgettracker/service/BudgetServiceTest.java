@@ -24,7 +24,7 @@ public class BudgetServiceTest {
     }
 
     @Test
-    void addExpense_addsExpenseToCorrectTerm() {
+    void addsExpenseToCorrectTerm() {
         int before = service.getExpensesForTerm("Winter 2026").size();
 
         service.addExpense(
@@ -42,7 +42,7 @@ public class BudgetServiceTest {
     }
 
     @Test
-    void totalExpenses_isCalculatedCorrectly() {
+    void totalExpensesisCalculatedCorrectly() {
         service.addExpense(
                 new Expense(
                         "Food",
@@ -58,7 +58,7 @@ public class BudgetServiceTest {
     }
 
     @Test
-    void remainingBalance_isIncomeMinusExpenses() {
+    void remainingBalance() {
         service.addExpense(
                 new Expense(
                         "Food",
@@ -74,7 +74,7 @@ public class BudgetServiceTest {
     }
 
     @Test
-    void isOverBudget_returnsTrueWhenExpensesAreHigherThanBudget() {
+    void checkisOverBudget() {
         service.addExpense(
                 new Expense(
                         "Books",
@@ -113,5 +113,24 @@ public class BudgetServiceTest {
 
         List<Expense> winterExpenses = service.getExpensesForTerm("Winter 2026");
         assertTrue(winterExpenses.stream().allMatch(e -> e.getAcademicTerm().equals("Winter 2026")));
+    }
+
+    @Test
+    void addExpense_preservesPlannedExpenseType() {
+        Expense plannedExpense = new Expense(
+                "Tuition",
+                "Estimated Tuition",
+                1000,
+                LocalDate.now(),
+                "Winter 2026"
+        );
+        plannedExpense.setType("PLANNED");
+
+        service.addExpense(plannedExpense);
+
+        List<Expense> expenses = service.getExpensesForTerm("Winter 2026");
+        Expense addedExpense = expenses.get(expenses.size() - 1);
+
+        assertEquals("PLANNED", addedExpense.getType());
     }
 }

@@ -3,6 +3,8 @@ import yorkTuitionData from "../data/yorkTuitionData";
 import yorkResidenceData from "../data/yorkResidenceData";
 import expenseAPI from "../api/ExpensesAPI";
 import { formatCurrency, getHomeCurrency, convertFromCad } from "../utils/currency";
+import { calculateTuition, calculateHousing, calculateTotalCost } from "../utils/yorkCostCalculator";
+
 
 function YorkCostEstimator() {
   const sessionOptions = yorkTuitionData.sessions || [];
@@ -80,7 +82,7 @@ function YorkCostEstimator() {
     total: 0,
   };
 
-  const tuitionTotal = perCreditFees.total * Number(credits || 0);
+  const tuitionTotal = calculateTuition(currentProgram, credits, studentType);
   const booksLow = currentProgram?.estimatedBooksAndSupplies?.min || 0;
   const booksHigh = currentProgram?.estimatedBooksAndSupplies?.max || 0;
 
@@ -92,7 +94,12 @@ function YorkCostEstimator() {
 
   const diningCost = currentDiningPlan?.cost || 0;
 
-  const housingTotal = residenceRate + diningCost + applicationFee + residenceAdminFee;
+  const housingTotal = calculateHousing(
+    currentRoom,
+    currentDiningPlan,
+    yorkResidenceData.additionalFees
+  );
+  const totalCost = calculateTotalCost(tuitionTotal, housingTotal);
   const upfrontTotal = applicationFee + roomDeposit + residenceAdminFee;
   const estimatedTotalLow = tuitionTotal + booksLow + housingTotal;
   const estimatedTotalHigh = tuitionTotal + booksHigh + housingTotal;
@@ -390,6 +397,9 @@ function YorkCostEstimator() {
           <div style={{ marginTop: "10px", color: "#6b7280", fontSize: "14px" }}>
             In {homeCurrency}: {formatCurrency(convertFromCad(estimatedTotalLow, homeCurrency), homeCurrency)} -{" "}
             {formatCurrency(convertFromCad(estimatedTotalHigh, homeCurrency), homeCurrency)}
+          </div>
+          <div style={{ marginTop: "10px", color: "#111827", fontSize: "14px", fontWeight: "600" }}>
+            Base total before books range: {formatCurrency(totalCost)}
           </div>
         </div>
 
