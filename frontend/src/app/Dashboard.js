@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import expenseAPI from "../api/ExpensesAPI";
 import budgetAPI from "../api/BudgetAPI";
+import SimpleBurnRateDashboard from "./SimpleBurnRateDashboard.js";
+import CoffeeRealityCheck from "./CoffeeRealityCheck";
 
 const TERMS = ["Winter 2026", "Summer 2026", "Fall 2026", "Winter 2027"];
 
@@ -86,6 +88,16 @@ function Dashboard() {
         </select>
       </div>
 
+      {/* 🔥 BURN RATE DASHBOARD - THE KILLER FEATURE */}
+      <SimpleBurnRateDashboard 
+        term={selectedTerm}
+        totalBudget={totalBudget}
+        totalSpent={totalSpent}
+      />
+
+      {/* ☕ COFFEE REALITY CHECK */}
+      <CoffeeRealityCheck term={selectedTerm} totalBudget={totalBudget} />
+      
       {/* Top Summary Cards */}
       <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
 
