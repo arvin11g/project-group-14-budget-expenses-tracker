@@ -1,75 +1,136 @@
 package com.yorku.budgettracker.budgettracker.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
+import com.yorku.budgettracker.budgettracker.data.StubExpenseDataAccess;
 import com.yorku.budgettracker.budgettracker.model.Expense;
-import com.yorku.budgettracker.budgettracker.stub.InMemoryExpenseStore;
 
+@ActiveProfiles("stub")
 public class BudgetServiceTest {
 
     private BudgetService service;
 
     @BeforeEach
-    void setup() {
-        service = new BudgetService(new InMemoryExpenseStore());
-
+    void setUp() {
+        service = new BudgetService(new StubExpenseDataAccess());
     }
 
     @Test
-    void addExpense_increasesCountForTerm() {
-
+    void addsExpenseToCorrectTerm() {
         int before = service.getExpensesForTerm("Winter 2026").size();
 
-        service.addExpense(new Expense(
-                "food",
-                "Lunch",
-                20,
-                LocalDate.now(),
-                "Winter 2026"
-        ));
+        service.addExpense(
+                new Expense(
+                        "Food",
+                        "Groceries",
+                        100,
+                        LocalDate.now(),
+                        "Winter 2026"
+                )
+        );
 
         int after = service.getExpensesForTerm("Winter 2026").size();
-
         assertEquals(before + 1, after);
     }
 
     @Test
-    void totalExpenses_isCalculatedCorrectly() {
+    void totalExpensesisCalculatedCorrectly() {
+        service.addExpense(
+                new Expense(
+                        "Food",
+                        "Groceries",
+                        100,
+                        LocalDate.now(),
+                        "Winter 2026"
+                )
+        );
 
-        service.addExpense(new Expense(
-                "food",
-                "Groceries",
-                100,
-                LocalDate.now(),
-                "Winter 2026"
-        ));
-
-        // InMemoryExpenseRepository starts with rent=1200 for Winter 2026
         double total = service.getTotalExpensesForTerm("Winter 2026");
-
         assertEquals(1300, total, 0.001);
     }
 
     @Test
-    void remainingBalance_isIncomeMinusExpenses() {
+    void remainingBalance() {
+        service.addExpense(
+                new Expense(
+                        "Food",
+                        "Lunch",
+                        50,
+                        LocalDate.now(),
+                        "Winter 2026"
+                )
+        );
 
         double remaining = service.getRemainingBalance("Winter 2026", 2000);
-
-        // 2000 - 1200 initial rent
-        assertEquals(800, remaining, 0.001);
+        assertEquals(750, remaining, 0.001);
     }
 
     @Test
-    void isOverBudget_trueWhenExpensesExceedIncome() {
+    void checkisOverBudget() {
+        service.addExpense(
+                new Expense(
+                        "Books",
+                        "Textbook",
+                        300,
+                        LocalDate.now(),
+                        "Winter 2026"
+                )
+        );
 
-        boolean over = service.isOverBudget("Winter 2026", 500);
+        boolean overBudget = service.isOverBudget("Winter 2026", 200);
+        assertTrue(overBudget);
+    }
 
-        // 500 - 1200 initial rent => negative
-        assertTrue(over);
+    @Test
+    void getExpensesForTerm_returnsOnlyExpensesForThatTerm() {
+        service.addExpense(
+                new Expense(
+                        "Food",
+                        "Dinner",
+                        40,
+                        LocalDate.now(),
+                        "Winter 2026"
+                )
+        );
+
+        service.addExpense(
+                new Expense(
+                        "Rent",
+                        "Rent",
+                        700,
+                        LocalDate.now(),
+                        "Fall 2026"
+                )
+        );
+
+        List<Expense> winterExpenses = service.getExpensesForTerm("Winter 2026");
+        assertTrue(winterExpenses.stream().allMatch(e -> e.getAcademicTerm().equals("Winter 2026")));
+    }
+
+    @Test
+    void addExpense_preservesPlannedExpenseType() {
+        Expense plannedExpense = new Expense(
+                "Tuition",
+                "Estimated Tuition",
+                1000,
+                LocalDate.now(),
+                "Winter 2026"
+        );
+        plannedExpense.setType("PLANNED");
+
+        service.addExpense(plannedExpense);
+
+        List<Expense> expenses = service.getExpensesForTerm("Winter 2026");
+        Expense addedExpense = expenses.get(expenses.size() - 1);
+
+        assertEquals("PLANNED", addedExpense.getType());
     }
 }

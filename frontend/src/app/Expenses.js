@@ -1,23 +1,20 @@
 import { useState, useEffect } from "react";
 import expenseAPI from "../api/ExpensesAPI";
-
+import { formatCurrency } from "../utils/currency";
 
 function Expenses() {
-  // State to store list of expenses --> used AI to help generate const
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // State for the form inputs
   const [formData, setFormData] = useState({
     description: "",
     amount: "",
     category: "",
     date: "",
-    academicTerm: "Winter 2026" // Default term
+    academicTerm: "Winter 2026",
   });
 
-  // Fetch expenses from backend when component loads
   useEffect(() => {
     fetchExpenses();
   }, []);
@@ -36,47 +33,45 @@ function Expenses() {
     }
   };
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate form
-    if (!formData.description || !formData.amount || !formData.category || !formData.date || !formData.academicTerm) {
+    if (
+      !formData.description ||
+      !formData.amount ||
+      !formData.category ||
+      !formData.date ||
+      !formData.academicTerm
+    ) {
       alert("Please fill in all fields!");
       return;
     }
 
     try {
-      // Create expense object matching your backend model
       const newExpense = {
         description: formData.description,
         amount: parseFloat(formData.amount),
         category: formData.category,
-        date: formData.date, // Backend expects LocalDate in YYYY-MM-DD format
-        academicTerm: formData.academicTerm
+        date: formData.date,
+        academicTerm: formData.academicTerm,
       };
 
-      // Send to backend
       await expenseAPI.createExpense(newExpense);
-
-      // Refresh the list
       await fetchExpenses();
 
-      // Reset form
       setFormData({
         description: "",
         amount: "",
         category: "",
         date: "",
-        academicTerm: "Winter 2026"
+        academicTerm: "Winter 2026",
       });
 
       alert("Expense added successfully!");
@@ -86,12 +81,11 @@ function Expenses() {
     }
   };
 
-  // Handle delete
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this expense?")) {
       try {
         await expenseAPI.deleteExpense(id);
-        await fetchExpenses(); // Refresh list
+        await fetchExpenses();
         alert("Expense deleted successfully!");
       } catch (err) {
         console.error("Error deleting expense:", err);
@@ -100,7 +94,6 @@ function Expenses() {
     }
   };
 
-  // Calculate total
   const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
 
   if (loading) {
@@ -116,22 +109,23 @@ function Expenses() {
       <h1>Expenses</h1>
 
       {error && (
-        <div style={{ 
-          padding: "15px", 
-          backgroundColor: "#fee2e2", 
-          color: "#991b1b", 
-          borderRadius: "8px", 
-          marginBottom: "20px" 
-        }}>
+        <div
+          style={{
+            padding: "15px",
+            backgroundColor: "#fee2e2",
+            color: "#991b1b",
+            borderRadius: "8px",
+            marginBottom: "20px",
+          }}
+        >
           {error}
         </div>
       )}
 
       <div style={{ display: "flex", gap: "30px", marginTop: "30px" }}>
-        {/* Left Side - Add Expense Form */}
         <div className="card" style={{ flex: 1 }}>
           <h2 style={{ marginBottom: "20px" }}>Add New Expense</h2>
-          
+
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: "15px" }}>
               <label style={{ display: "block", marginBottom: "5px", fontWeight: "500" }}>
@@ -148,14 +142,14 @@ function Expenses() {
                   padding: "10px",
                   fontSize: "14px",
                   border: "1px solid #d1d5db",
-                  borderRadius: "8px"
+                  borderRadius: "8px",
                 }}
               />
             </div>
 
             <div style={{ marginBottom: "15px" }}>
               <label style={{ display: "block", marginBottom: "5px", fontWeight: "500" }}>
-                Amount ($)
+                Amount (CAD)
               </label>
               <input
                 type="number"
@@ -170,7 +164,7 @@ function Expenses() {
                   padding: "10px",
                   fontSize: "14px",
                   border: "1px solid #d1d5db",
-                  borderRadius: "8px"
+                  borderRadius: "8px",
                 }}
               />
             </div>
@@ -188,7 +182,7 @@ function Expenses() {
                   padding: "10px",
                   fontSize: "14px",
                   border: "1px solid #d1d5db",
-                  borderRadius: "8px"
+                  borderRadius: "8px",
                 }}
               >
                 <option value="">Select a category</option>
@@ -216,7 +210,7 @@ function Expenses() {
                   padding: "10px",
                   fontSize: "14px",
                   border: "1px solid #d1d5db",
-                  borderRadius: "8px"
+                  borderRadius: "8px",
                 }}
               />
             </div>
@@ -234,7 +228,7 @@ function Expenses() {
                   padding: "10px",
                   fontSize: "14px",
                   border: "1px solid #d1d5db",
-                  borderRadius: "8px"
+                  borderRadius: "8px",
                 }}
               >
                 <option value="Winter 2026">Winter 2026</option>
@@ -255,7 +249,7 @@ function Expenses() {
                 borderRadius: "8px",
                 fontSize: "16px",
                 fontWeight: "600",
-                cursor: "pointer"
+                cursor: "pointer",
               }}
             >
               Add Expense
@@ -263,12 +257,18 @@ function Expenses() {
           </form>
         </div>
 
-        {/* Right Side - Expenses List */}
         <div className="card" style={{ flex: 1 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
             <h2>All Expenses</h2>
             <div style={{ fontSize: "18px", fontWeight: "bold", color: "#2563eb" }}>
-              Total: ${totalExpenses.toFixed(2)}
+              Total: {formatCurrency(totalExpenses)}
             </div>
           </div>
 
@@ -286,7 +286,7 @@ function Expenses() {
                     borderBottom: "1px solid #e5e7eb",
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: "center"
+                    alignItems: "center",
                   }}
                 >
                   <div style={{ flex: 1 }}>
@@ -299,7 +299,7 @@ function Expenses() {
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                     <div style={{ fontSize: "18px", fontWeight: "bold" }}>
-                      ${expense.amount.toFixed(2)}
+                      {formatCurrency(expense.amount)}
                     </div>
                     <button
                       onClick={() => handleDelete(expense.id)}
@@ -310,7 +310,7 @@ function Expenses() {
                         border: "none",
                         borderRadius: "6px",
                         fontSize: "13px",
-                        cursor: "pointer"
+                        cursor: "pointer",
                       }}
                     >
                       Delete

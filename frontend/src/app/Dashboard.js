@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import expenseAPI from "../api/ExpensesAPI";
 import budgetAPI from "../api/BudgetAPI";
-import SimpleBurnRateDashboard from "./SimpleBurnRateDashboard.js";
-import CoffeeRealityCheck from "./CoffeeRealityCheck";
+import { formatCurrency } from "../utils/currency";
+import { splitExpenses, calculateExpenseTotal } from "../utils/expenseUtils";
 
 const TERMS = ["Winter 2026", "Summer 2026", "Fall 2026", "Winter 2027"];
 
@@ -11,6 +11,7 @@ function Dashboard() {
   const [totalBudget, setTotalBudget] = useState(0);
   const [totalSpent, setTotalSpent] = useState(0);
   const [recentExpenses, setRecentExpenses] = useState([]);
+  const [expenses, setExpenses] = useState([]);
   const [editingBudget, setEditingBudget] = useState(false);
   const [budgetInput, setBudgetInput] = useState("");
   const [loading, setLoading] = useState(true);
@@ -23,29 +24,25 @@ function Dashboard() {
     try {
       setLoading(true);
 
-      const [expensesRes, budgetRes] = await Promise.allSettled([
-        expenseAPI.getExpensesByTerm(selectedTerm),
-        budgetAPI.getBudgetByTerm(selectedTerm),
-      ]);
-
       // Expenses
-      const expenses = expensesRes.status === "fulfilled" ? expensesRes.value.data : [];
-      const spent = expenses.reduce((sum, e) => sum + e.amount, 0);
-      setTotalSpent(spent);
-      const sorted = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
-      setRecentExpenses(sorted.slice(0, 3));
+   const [expensesRes, summaryRes] = await Promise.allSettled([
+     expenseAPI.getExpensesByTerm(selectedTerm),
+     budgetAPI.getTermSummary(selectedTerm),
+   ]);
 
-      // Budget — id will be null if no budget saved yet for this term
-      if (budgetRes.status === "fulfilled") {
-        const data = budgetRes.value.data;
-        if (data.id !== null && data.id !== undefined) {
-          setTotalBudget(data.amount);
-          setBudgetInput(data.amount);
-        } else {
-          setTotalBudget(0);
-          setBudgetInput("");
-        }
-      }
+   // Expenses
+   const expensesData = expensesRes.status === "fulfilled" ? expensesRes.value.data : [];
+   setExpenses(expensesData);
+   const sorted = [...expensesData].sort((a, b) => new Date(b.date) - new Date(a.date));
+   setRecentExpenses(sorted.slice(0, 3));
+
+   // Summary from backend
+   if (summaryRes.status === "fulfilled") {
+     const data = summaryRes.value.data;
+     setTotalBudget(data.budget || 0);
+     setTotalSpent(data.totalExpenses || 0);
+     setBudgetInput(data.budget || "");
+   }
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
     } finally {
@@ -72,6 +69,35 @@ function Dashboard() {
   const remaining = totalBudget - totalSpent;
   const percentage = totalBudget > 0 ? Math.min((totalSpent / totalBudget) * 100, 100) : 0;
   const overBudget = totalSpent > totalBudget && totalBudget > 0;
+  const { planned, actual } = splitExpenses(expenses);
+  const plannedTotal = calculateExpenseTotal(planned);
+  const actualTotal = calculateExpenseTotal(actual);
+
+  // Financial health calculation
+  let healthScore = 0;
+  let healthStatus = "No Budget";
+
+  if (totalBudget > 0) {
+    const ratio = remaining / totalBudget;
+    healthScore = Math.max(0, Math.min(100, Math.round(ratio * 100)));
+
+    if (ratio > 0.4) healthStatus = "Excellent";
+    else if (ratio > 0.2) healthStatus = "Good";
+    else if (ratio > 0) healthStatus = "Warning";
+    else healthStatus = "Over Budget";
+  }
+
+  let advice = "Set a budget to start getting personalized insights.";
+
+  if (healthStatus === "Excellent") {
+    advice = "You're managing your budget very well this term.";
+  } else if (healthStatus === "Good") {
+    advice = "You're on track with your spending.";
+  } else if (healthStatus === "Warning") {
+    advice = "You are close to your budget limit. Monitor spending carefully.";
+  } else if (healthStatus === "Over Budget") {
+    advice = "You are over budget. Consider reducing non-essential expenses.";
+  }
 
   if (loading) return <div style={{ padding: "50px", textAlign: "center" }}><h2>Loading...</h2></div>;
 
@@ -88,16 +114,6 @@ function Dashboard() {
         </select>
       </div>
 
-      {/* 🔥 BURN RATE DASHBOARD - THE KILLER FEATURE */}
-      <SimpleBurnRateDashboard 
-        term={selectedTerm}
-        totalBudget={totalBudget}
-        totalSpent={totalSpent}
-      />
-
-      {/* ☕ COFFEE REALITY CHECK */}
-      <CoffeeRealityCheck term={selectedTerm} totalBudget={totalBudget} />
-      
       {/* Top Summary Cards */}
       <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
 
@@ -120,17 +136,33 @@ function Dashboard() {
             </div>
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px" }}>
-              <div className="card-value">{totalBudget > 0 ? `$${totalBudget.toFixed(2)}` : "Not set"}</div>
+             <div className="card-value">{totalBudget > 0 ? formatCurrency(totalBudget) : "Not set"}</div>
               <button onClick={() => setEditingBudget(true)} style={{ fontSize: "12px", padding: "3px 8px", background: "#f3f4f6", border: "1px solid #d1d5db", borderRadius: "6px", cursor: "pointer" }}>Edit</button>
             </div>
           )}
         </div>
 
-        <SummaryCard title="Total Spent" value={`$${totalSpent.toFixed(2)}`} />
+       <SummaryCard title="Total Spent" value={formatCurrency(totalSpent)} />
         <SummaryCard
           title="Remaining"
-          value={totalBudget > 0 ? `$${remaining.toFixed(2)}` : "No budget set"}
+          value={totalBudget > 0 ? formatCurrency(remaining) : "No budget set"}
           valueColor={overBudget ? "#ef4444" : remaining > 0 ? "#16a34a" : "#6b7280"}
+        />
+        <SummaryCard
+          title="Financial Health"
+          value={`${healthScore}/100 (${healthStatus})`}
+          subtitle={advice}
+          valueColor={
+            healthStatus === "Excellent" ? "#16a34a" :
+            healthStatus === "Good" ? "#2563eb" :
+            healthStatus === "Warning" ? "#f59e0b" :
+            healthStatus === "Over Budget" ? "#ef4444" : undefined
+          }
+        />
+        <SummaryCard
+          title="Planned vs Actual"
+          value={`Planned: ${formatCurrency(plannedTotal)}`}
+          subtitle={`Actual: ${formatCurrency(actualTotal)}`}
         />
       </div>
 
@@ -139,7 +171,14 @@ function Dashboard() {
         <div className="card" style={{ flex: 1 }}>
           <h3>Budget Progress</h3>
           {totalBudget > 0 ? (
-            <ProgressBar percentage={percentage} overBudget={overBudget} />
+            <>
+              <ProgressBar percentage={percentage} overBudget={overBudget} />
+              {overBudget && (
+                <p style={{ color: "#ef4444", marginTop: "12px", fontWeight: "600" }}>
+                  Warning: You are over budget for {selectedTerm}.
+                </p>
+              )}
+            </>
           ) : (
             <p style={{ color: "#6b7280", marginTop: "15px" }}>Set a budget above to track progress.</p>
           )}
@@ -154,7 +193,7 @@ function Dashboard() {
               {recentExpenses.map((e) => (
                 <li key={e.id} style={{ padding: "8px 0", borderBottom: "1px solid #e5e7eb", display: "flex", justifyContent: "space-between" }}>
                   <span>{e.description} <span style={{ color: "#6b7280", fontSize: "13px" }}>({e.category})</span></span>
-                  <strong>${e.amount.toFixed(2)}</strong>
+                  <strong>{formatCurrency(e.amount)}</strong>
                 </li>
               ))}
             </ul>
@@ -165,11 +204,16 @@ function Dashboard() {
   );
 }
 
-function SummaryCard({ title, value, valueColor }) {
+function SummaryCard({ title, value, subtitle, valueColor }) {
   return (
     <div className="card" style={{ width: "220px" }}>
       <div className="card-title">{title}</div>
       <div className="card-value" style={valueColor ? { color: valueColor } : {}}>{value}</div>
+      {subtitle && (
+        <div style={{ marginTop: "8px", fontSize: "13px", color: "#6b7280", lineHeight: "1.4" }}>
+          {subtitle}
+        </div>
+      )}
     </div>
   );
 }

@@ -3,11 +3,14 @@ import Sidebar from "./Sidebar";
 import Dashboard from "./Dashboard";
 import Budgets from "./Budgets";
 import Expenses from "./Expenses";
+import Charts from "./Charts";
+import Profile from "./Profile";
+import YorkCostEstimator from "./YorkCostEstimator";
 import "./App.css";
 
 function App() {
   return (
-    <div className="app-container">
+   <div className="app-container">
       <Sidebar />
 
       <div className="main-content">
@@ -15,6 +18,9 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/budgets" element={<Budgets />} />
           <Route path="/expenses" element={<Expenses />} />
+          <Route path="/charts" element={<Charts />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/york-cost-estimator" element={<YorkCostEstimator />} />
         </Routes>
       </div>
     </div>

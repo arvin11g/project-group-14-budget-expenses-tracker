@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.yorku.budgettracker.budgettracker.exception.ExpenseNotFoundException;
 import com.yorku.budgettracker.budgettracker.model.Expense;
 import com.yorku.budgettracker.budgettracker.repository.ExpenseRepository;
+import com.yorku.budgettracker.budgettracker.service.BudgetService;
 
 import jakarta.validation.Valid;
 
@@ -33,9 +34,11 @@ import jakarta.validation.Valid;
 public class ExpenseController {
 
     private final ExpenseRepository expenseRepository;
+    private final BudgetService budgetService;
 
-    public ExpenseController(ExpenseRepository expenseRepository) {
+    public ExpenseController(ExpenseRepository expenseRepository, BudgetService budgetService) {
         this.expenseRepository = expenseRepository;
+        this.budgetService = budgetService;
     }
 
     // GET /api/expenses
@@ -81,7 +84,7 @@ public class ExpenseController {
     public ResponseEntity<Expense> createExpense(
             @Valid @RequestBody Expense expense) {
 
-        Expense savedExpense = expenseRepository.save(expense);
+        Expense savedExpense = budgetService.addExpense(expense);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedExpense);
     }
 
