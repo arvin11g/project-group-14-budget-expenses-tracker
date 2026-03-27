@@ -1,4 +1,4 @@
-# Team 14 – Iteration 0 & Iteration 1 Log
+# Team 14 
 
 ---
 
@@ -330,5 +330,6 @@ Bugs Identified and Resolved:
 
 2.)I implemented the edit expense functionality after discovering during testing that there was no way to modify existing expenses through the UI. I added an edit button to each expense, which allows the user to load the selected expense into the form. The form dynamically switches between add and edit mode, and updates are sent through the PUT API endpoint. I also added a cancel option to exit edit mode. This improves usability and ensures the system now fully supports managing expenses as intended in the user stories.
 
+3.)I noticed that the name in the Profile section was not persisting after being updated. When I entered a new name and then navigated to another page like the Dashboard, the Profile page reset the name back to "York University Student" when I came back. This suggests the updated profile data is not being saved or reloaded properly.
 
 
