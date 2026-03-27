@@ -44,7 +44,7 @@ public class ExpenseController {
     // GET /api/expenses
     @GetMapping
     public ResponseEntity<List<Expense>> getAllExpenses() {
-        return ResponseEntity.ok(expenseRepository.findAll());
+        return ResponseEntity.ok(budgetService.getAllExpenses());
     }
 
     @GetMapping("/page")
@@ -56,13 +56,13 @@ public class ExpenseController {
     // GET /api/expenses/term/{term}
     @GetMapping("/term/{term}")
     public ResponseEntity<List<Expense>> getExpensesByTerm(@PathVariable String term) {
-        return ResponseEntity.ok(expenseRepository.findByAcademicTerm(term));
+        return ResponseEntity.ok(budgetService.getExpensesForTerm(term));
     }
 
     // Requirement: View all expenses for a selected term (Chronological)
     @GetMapping("/term/{term}/chronological")
     public ResponseEntity<List<Expense>> getExpensesByTermChronological(@PathVariable String term) {
-        List<Expense> expenses = expenseRepository.findByAcademicTerm(term);
+        List<Expense> expenses = budgetService.getExpensesForTerm(term);
         expenses.sort((e1, e2) -> e1.getDate().compareTo(e2.getDate()));
         return ResponseEntity.ok(expenses);
     }
@@ -70,7 +70,7 @@ public class ExpenseController {
     // Requirement: View expenses grouped by category for a term
     @GetMapping("/term/{term}/grouped")
     public ResponseEntity<Map<String, Double>> getExpensesByTermGrouped(@PathVariable String term) {
-        List<Expense> expenses = expenseRepository.findByAcademicTerm(term);
+        List<Expense> expenses = budgetService.getExpensesForTerm(term);
         Map<String, Double> groupedExpenses = expenses.stream()
             .collect(Collectors.groupingBy(
                 Expense::getCategory,

@@ -9,7 +9,7 @@ import com.yorku.budgettracker.budgettracker.model.Expense;
 import com.yorku.budgettracker.budgettracker.repository.ExpenseRepository;
 
 @Component
-@Profile("postgres")
+@Profile("!stub")
 public class DbExpenseDataAccess implements ExpenseDataAccess {
 
     private final ExpenseRepository expenseRepository;
@@ -26,5 +26,10 @@ public class DbExpenseDataAccess implements ExpenseDataAccess {
     @Override
     public List<Expense> findByAcademicTerm(String academicTerm) {
         return expenseRepository.findByAcademicTerm(academicTerm);
+    }
+
+    @Override
+    public List<Expense> findAll() {
+        return expenseRepository.findAll();
     }
 }

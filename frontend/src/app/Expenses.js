@@ -6,6 +6,7 @@ function Expenses() {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editingExpense, setEditingExpense] = useState(null);
 
   const [formData, setFormData] = useState({
     description: "",
@@ -31,6 +32,28 @@ function Expenses() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      description: "",
+      amount: "",
+      category: "",
+      date: "",
+      academicTerm: "Winter 2026",
+    });
+    setEditingExpense(null);
+  };
+
+  const handleEdit = (expense) => {
+    setEditingExpense(expense);
+    setFormData({
+      description: expense.description || "",
+      amount: expense.amount ?? "",
+      category: expense.category || "",
+      date: expense.date || "",
+      academicTerm: expense.academicTerm || "Winter 2026",
+    });
   };
 
   const handleChange = (e) => {
@@ -63,18 +86,16 @@ function Expenses() {
         academicTerm: formData.academicTerm,
       };
 
-      await expenseAPI.createExpense(newExpense);
+      if (editingExpense) {
+        await expenseAPI.updateExpense(editingExpense.id, newExpense);
+        alert("Expense updated successfully!");
+      } else {
+        await expenseAPI.createExpense(newExpense);
+        alert("Expense added successfully!");
+      }
+
       await fetchExpenses();
-
-      setFormData({
-        description: "",
-        amount: "",
-        category: "",
-        date: "",
-        academicTerm: "Winter 2026",
-      });
-
-      alert("Expense added successfully!");
+      resetForm();
     } catch (err) {
       console.error("Error adding expense:", err);
       alert("Failed to add expense. Please check the console for details.");
@@ -124,7 +145,7 @@ function Expenses() {
 
       <div style={{ display: "flex", gap: "30px", marginTop: "30px" }}>
         <div className="card" style={{ flex: 1 }}>
-          <h2 style={{ marginBottom: "20px" }}>Add New Expense</h2>
+          <h2 style={{ marginBottom: "20px" }}>{editingExpense ? "Edit Expense" : "Add New Expense"}</h2>
 
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: "15px" }}>
@@ -252,8 +273,28 @@ function Expenses() {
                 cursor: "pointer",
               }}
             >
-              Add Expense
+              {editingExpense ? "Update Expense" : "Add Expense"}
             </button>
+            {editingExpense && (
+              <button
+                type="button"
+                onClick={resetForm}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  marginTop: "10px",
+                  backgroundColor: "#e5e7eb",
+                  color: "#111827",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                }}
+              >
+                Cancel Edit
+              </button>
+            )}
           </form>
         </div>
 
@@ -298,6 +339,20 @@ function Expenses() {
                     </div>
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                    <button
+                      onClick={() => handleEdit(expense)}
+                      style={{
+                        padding: "6px 12px",
+                        backgroundColor: "#2563eb",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "6px",
+                        fontSize: "13px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Edit
+                    </button>
                     <div style={{ fontSize: "18px", fontWeight: "bold" }}>
                       {formatCurrency(expense.amount)}
                     </div>

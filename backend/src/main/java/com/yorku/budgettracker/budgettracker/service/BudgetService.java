@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import com.yorku.budgettracker.budgettracker.data.ExpenseDataAccess;
 import com.yorku.budgettracker.budgettracker.model.Expense;
 
+// Handles all budget-related logic like adding expenses and organizing them by term.
+
+
 @Service
 public class BudgetService {
 
@@ -15,16 +18,19 @@ public class BudgetService {
     public BudgetService(ExpenseDataAccess expenseDataAccess) {
         this.expenseDataAccess = expenseDataAccess;
     }
-
+    // adds a new expense and makes sure it defaults to ACTUAL if no type is given
     public Expense addExpense(Expense expense) {
         if (expense.getType() == null) {
             expense.setType("ACTUAL");
         }
         return expenseDataAccess.save(expense);
     }
+    public List<Expense> getAllExpenses() {
+        return expenseDataAccess.findAll();
+    }
 
-    public List<Expense> getExpensesForTerm(String academicTerm) {
-        return expenseDataAccess.findByAcademicTerm(academicTerm);
+    public List<Expense> getExpensesForTerm(String term) {
+        return expenseDataAccess.findByAcademicTerm(term);
     }
 
     public double getTotalExpensesForTerm(String academicTerm) {
@@ -42,4 +48,6 @@ public class BudgetService {
     public boolean isOverBudget(String academicTerm, double termIncome) {
         return getRemainingBalance(academicTerm, termIncome) < 0;
     }
+
+
 }

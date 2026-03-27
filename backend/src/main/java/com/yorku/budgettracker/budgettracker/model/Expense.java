@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 @Entity
-public class Expense {
+public class Expense extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -82,7 +82,7 @@ public class Expense {
 		
 	}
 	
-	public long getId() {
+	public Long getId() {
 	    return id;
 	}
 	public String getType() {

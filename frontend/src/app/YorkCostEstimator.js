@@ -5,7 +5,7 @@ import expenseAPI from "../api/ExpensesAPI";
 import { formatCurrency, getHomeCurrency, convertFromCad } from "../utils/currency";
 import { calculateTuition, calculateHousing, calculateTotalCost } from "../utils/yorkCostCalculator";
 
-
+//York-specific cost estimator for tuition, residence, and budget planning
 function YorkCostEstimator() {
   const sessionOptions = yorkTuitionData.sessions || [];
   const defaultSession = sessionOptions[0];
@@ -163,6 +163,7 @@ function YorkCostEstimator() {
       }
     }
   };
+  // adds the estimated tuition and housing costs into the selected term as planned expenses
   async function handleAddToBudget() {
     try {
       await expenseAPI.createExpense({
