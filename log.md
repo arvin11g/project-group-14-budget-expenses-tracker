@@ -332,4 +332,6 @@ Bugs Identified and Resolved:
 
 3.)I noticed that the name in the Profile section was not persisting after being updated. When I entered a new name and then navigated to another page like the Dashboard, the Profile page reset the name back to "York University Student" when I came back. This suggests the updated profile data is not being saved or reloaded properly.
 
+ Cleaned up the Dashboard by removing the burn rate section and the financial health block. They were taking up too much space on the main page and made the dashboard feel cluttered. I moved that direction into a separate Spending Insights page so the Dashboard stays focused on the main budgeting overview.
+
 
