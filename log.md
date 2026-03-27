@@ -325,8 +325,10 @@ Refactoring 3: Centralize planned vs actual handling
 Attendees - Iyinoluwa
 
 Bugs Identified and Resolved:
-I noticed that when I added a new expense, it would update the dashboard but not show up in the All Expenses section. After debugging, I realized the issue was that the create and read operations were using different data paths. The expense was being saved through the service layer, but the Expenses page was fetching directly from the repository, which caused inconsistency. I fixed this by routing all read operations through the BudgetService so everything uses the same data access layer. I also corrected the Spring profile configuration so the application uses the database instead of the in-memory stub during normal runs. After this, both new and existing expenses display correctly.
 
+1.)I noticed that when I added a new expense, it would update the dashboard but not show up in the All Expenses section. After debugging, I realized the issue was that the create and read operations were using different data paths. The expense was being saved through the service layer, but the Expenses page was fetching directly from the repository, which caused inconsistency. I fixed this by routing all read operations through the BudgetService so everything uses the same data access layer. I also corrected the Spring profile configuration so the application uses the database instead of the in-memory stub during normal runs. After this, both new and existing expenses display correctly.
+
+2.)I implemented the edit expense functionality after discovering during testing that there was no way to modify existing expenses through the UI. I added an edit button to each expense, which allows the user to load the selected expense into the form. The form dynamically switches between add and edit mode, and updates are sent through the PUT API endpoint. I also added a cancel option to exit edit mode. This improves usability and ensures the system now fully supports managing expenses as intended in the user stories.
 
 
 
