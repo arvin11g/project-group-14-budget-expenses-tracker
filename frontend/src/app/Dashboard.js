@@ -5,6 +5,8 @@ import { formatCurrency } from "../utils/currency";
 import { splitExpenses, calculateExpenseTotal } from "../utils/expenseUtils";
 import CoffeeRealityCheck from "./CoffeeRealityCheck";
 import SimpleBurnRateDashboard from "./SimpleBurnRateDashboard";
+import PayMeBack from "./Paymeback";
+import SpendingComparison from "./SpendingComparison";
 
 const TERMS = ["Winter 2026", "Summer 2026", "Fall 2026", "Winter 2027"];
 
@@ -20,18 +22,6 @@ function Dashboard() {
 
   useEffect(() => {
     fetchDashboardData();
-  }, [selectedTerm]);
-
-  useEffect(() => {
-    const handleFocus = () => {
-      fetchDashboardData();
-    };
-
-    window.addEventListener("focus", handleFocus);
-
-    return () => {
-      window.removeEventListener("focus", handleFocus);
-    };
   }, [selectedTerm]);
 
   const fetchDashboardData = async () => {
@@ -128,7 +118,22 @@ function Dashboard() {
         </select>
       </div>
 
-      <CoffeeRealityCheck term={selectedTerm} />
+      {/*BURN RATE DASHBOARD */}
+      <SimpleBurnRateDashboard 
+        term={selectedTerm}
+        totalBudget={totalBudget}
+        totalSpent={totalSpent}
+      />
+
+
+      {/* ☕ COFFEE REALITY CHECK */}
+      <CoffeeRealityCheck term={selectedTerm} totalBudget={totalBudget} />
+
+      {/* 💰 PAY ME BACK TRACKER */}
+      <PayMeBack term={selectedTerm} />
+
+      {/* 📊 SPENDING COMPARISON */}
+      <SpendingComparison term={selectedTerm} totalSpent={totalSpent} />
 
       {/* Top Summary Cards */}
       <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
@@ -216,14 +221,6 @@ function Dashboard() {
           )}
         </div>
       </div>
-
-      <div style={{ marginTop: "30px" }}>
-        <SimpleBurnRateDashboard
-          term={selectedTerm}
-          totalBudget={totalBudget}
-          totalSpent={totalSpent}
-        />
-      </div>
     </div>
   );
 }
@@ -255,7 +252,7 @@ function ProgressBar({ percentage, overBudget }) {
         }} />
       </div>
       <p style={{ marginTop: "10px", color: overBudget ? "#ef4444" : "inherit" }}>
-        {percentage.toFixed(1)}% Used {overBudget && " Over budget!"}
+        {percentage.toFixed(1)}% Used {overBudget && "⚠️ Over budget!"}
       </p>
     </div>
   );
