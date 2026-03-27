@@ -116,13 +116,6 @@ function Dashboard() {
         </select>
       </div>
 
-      {/*BURN RATE DASHBOARD */}
-      <SimpleBurnRateDashboard 
-        term={selectedTerm}
-        totalBudget={totalBudget}
-        totalSpent={totalSpent}
-      />
-
       <CoffeeRealityCheck term={selectedTerm} />
 
       {/* Top Summary Cards */}
@@ -210,6 +203,14 @@ function Dashboard() {
             </ul>
           )}
         </div>
+      </div>
+
+      <div style={{ marginTop: "30px" }}>
+        <SimpleBurnRateDashboard
+          term={selectedTerm}
+          totalBudget={totalBudget}
+          totalSpent={totalSpent}
+        />
       </div>
     </div>
   );
