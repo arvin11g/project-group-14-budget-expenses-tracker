@@ -119,7 +119,7 @@ function Dashboard() {
       </div>
 
       {/*BURN RATE DASHBOARD */}
-      <SimpleBurnRateDashboard 
+      <SimpleBurnRateDashboard
         term={selectedTerm}
         totalBudget={totalBudget}
         totalSpent={totalSpent}
