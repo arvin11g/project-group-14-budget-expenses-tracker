@@ -41,7 +41,7 @@ function CoffeeRealityCheck({ term }) {
 
   return (
     <div className="card" style={{ marginTop: "30px", backgroundColor: "#fef3c7", border: "2px solid #f59e0b" }}>
-      <h2 style={{ marginBottom: "20px", color: "#92400e" }}>☕ Stop Buying Coffee Reality Check</h2>
+      <h2 style={{ marginBottom: "20px", color: "#92400e" }}>☕ Stop Buying X Reality Check</h2>
 
       {/* Shame Header */}
       <div style={{
@@ -141,7 +141,7 @@ function CoffeeRealityCheck({ term }) {
             <>
               <li><strong>Cancel unused subscriptions</strong> - Do you REALLY watch Netflix AND Disney+?</li>
               <li><strong>Use student discounts</strong> - Most places give 10-15% off</li>
-              <li><strong>Free campus events</strong> - York has free concerts, movies, food</li>
+              <li><strong>Free campus events</strong> - York has free movie nights, sometimes..</li>
             </>
           )}
           <li><strong>Set a weekly "fun money" budget</strong> - ${(totalWaste / 16).toFixed(0)}/week max for non-essentials</li>
@@ -159,9 +159,7 @@ function CoffeeRealityCheck({ term }) {
         <p style={{ fontSize: "15px", color: "#991b1b", fontWeight: "600", marginBottom: "8px" }}>
           🔥 If you keep this up, you'll waste <strong>${(totalWaste * 3).toFixed(2)}</strong> this year
         </p>
-        <p style={{ fontSize: "13px", color: "#7f1d1d", margin: 0 }}>
-          That's {equivalents.textbooks * 3} textbooks or a round-trip flight to Europe
-        </p>
+
       </div>
     </div>
   );
