@@ -4,7 +4,6 @@ import budgetAPI from "../api/BudgetAPI";
 import { formatCurrency } from "../utils/currency";
 import { splitExpenses, calculateExpenseTotal } from "../utils/expenseUtils";
 import CoffeeRealityCheck from "./CoffeeRealityCheck";
-import SimpleBurnRateDashboard from "./SimpleBurnRateDashboard";
 import PayMeBack from "./Paymeback";
 import SpendingComparison from "./SpendingComparison";
 
@@ -77,32 +76,6 @@ function Dashboard() {
   const plannedTotal = calculateExpenseTotal(planned);
   const actualTotal = calculateExpenseTotal(actual);
 
-  // Financial health calculation
-  let healthScore = 0;
-  let healthStatus = "No Budget";
-
-  if (totalBudget > 0) {
-    const ratio = remaining / totalBudget;
-    healthScore = Math.max(0, Math.min(100, Math.round(ratio * 100)));
-
-    if (ratio > 0.4) healthStatus = "Excellent";
-    else if (ratio > 0.2) healthStatus = "Good";
-    else if (ratio > 0) healthStatus = "Warning";
-    else healthStatus = "Over Budget";
-  }
-
-  let advice = "Set a budget to start getting personalized insights.";
-
-  if (healthStatus === "Excellent") {
-    advice = "You're managing your budget very well this term.";
-  } else if (healthStatus === "Good") {
-    advice = "You're on track with your spending.";
-  } else if (healthStatus === "Warning") {
-    advice = "You are close to your budget limit. Monitor spending carefully.";
-  } else if (healthStatus === "Over Budget") {
-    advice = "You are over budget. Consider reducing non-essential expenses.";
-  }
-
   if (loading) return <div style={{ padding: "50px", textAlign: "center" }}><h2>Loading...</h2></div>;
 
   return (
@@ -117,14 +90,6 @@ function Dashboard() {
           {TERMS.map((t) => <option key={t} value={t}>{t}</option>)}
         </select>
       </div>
-
-      {/*BURN RATE DASHBOARD */}
-      <SimpleBurnRateDashboard
-        term={selectedTerm}
-        totalBudget={totalBudget}
-        totalSpent={totalSpent}
-      />
-
 
       {/* ☕ COFFEE REALITY CHECK */}
       <CoffeeRealityCheck term={selectedTerm} totalBudget={totalBudget} />
@@ -168,17 +133,6 @@ function Dashboard() {
           title="Remaining"
           value={totalBudget > 0 ? formatCurrency(remaining) : "No budget set"}
           valueColor={overBudget ? "#ef4444" : remaining > 0 ? "#16a34a" : "#6b7280"}
-        />
-        <SummaryCard
-          title="Financial Health"
-          value={`${healthScore}/100 (${healthStatus})`}
-          subtitle={advice}
-          valueColor={
-            healthStatus === "Excellent" ? "#16a34a" :
-            healthStatus === "Good" ? "#2563eb" :
-            healthStatus === "Warning" ? "#f59e0b" :
-            healthStatus === "Over Budget" ? "#ef4444" : undefined
-          }
         />
         <SummaryCard
           title="Planned vs Actual"
@@ -252,7 +206,7 @@ function ProgressBar({ percentage, overBudget }) {
         }} />
       </div>
       <p style={{ marginTop: "10px", color: overBudget ? "#ef4444" : "inherit" }}>
-        {percentage.toFixed(1)}% Used {overBudget && "⚠️ Over budget!"}
+        {percentage.toFixed(1)}% Used {overBudget && " Over budget!"}
       </p>
     </div>
   );
