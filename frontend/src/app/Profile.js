@@ -9,13 +9,18 @@ import {
 } from "../utils/currency";
 
 function Profile() {
-  const [profile, setProfile] = useState({
+  const defaultProfile = {
     name: "York University Student",
     program: "Software Engineering",
     school: "York University",
     academicYear: "2025–2026",
     currentTerm: "Winter 2026",
     homeCurrency: getHomeCurrency(),
+  };
+
+  const [profile, setProfile] = useState(() => {
+    const savedProfile = localStorage.getItem("studentBudgetProfile");
+    return savedProfile ? JSON.parse(savedProfile) : defaultProfile;
   });
 
   const [editing, setEditing] = useState(false);
@@ -33,6 +38,10 @@ function Profile() {
   useEffect(() => {
     loadSummary(profile.currentTerm);
   }, [profile.currentTerm]);
+
+  useEffect(() => {
+    localStorage.setItem("studentBudgetProfile", JSON.stringify(profile));
+  }, [profile]);
 
   const loadSummary = async (term) => {
     try {
@@ -68,7 +77,9 @@ function Profile() {
 
   const handleSave = () => {
     setProfile(formData);
+    setFormData(formData);
     setHomeCurrency(formData.homeCurrency);
+    localStorage.setItem("studentBudgetProfile", JSON.stringify(formData));
     setEditing(false);
     loadSummary(formData.currentTerm);
   };

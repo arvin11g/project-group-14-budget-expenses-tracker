@@ -22,6 +22,18 @@ function Dashboard() {
     fetchDashboardData();
   }, [selectedTerm]);
 
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchDashboardData();
+    };
+
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [selectedTerm]);
+
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
