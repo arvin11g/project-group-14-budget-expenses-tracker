@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import expenseAPI from "../api/ExpensesAPI";
 import { formatCurrency } from "../utils/currency";
+import PayMeBack from "./Paymeback";
 
 function Expenses() {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingExpense, setEditingExpense] = useState(null);
+  const [selectedTerm, setSelectedTerm] = useState("Winter 2026"); // Added for PayMeBack
 
   const [formData, setFormData] = useState({
     description: "",
@@ -94,8 +96,13 @@ function Expenses() {
         alert("Expense added successfully!");
       }
 
+      // 🔧 FIX: Refresh expenses after adding/updating
       await fetchExpenses();
       resetForm();
+      
+      // Notify parent if needed (for Dashboard to refresh)
+      window.dispatchEvent(new Event('expensesUpdated'));
+      
     } catch (err) {
       console.error("Error adding expense:", err);
       alert("Failed to add expense. Please check the console for details.");
@@ -106,7 +113,13 @@ function Expenses() {
     if (window.confirm("Are you sure you want to delete this expense?")) {
       try {
         await expenseAPI.deleteExpense(id);
+        
+        // 🔧 FIX: Refresh expenses immediately after deleting
         await fetchExpenses();
+        
+        // Notify parent if needed (for Dashboard to refresh)
+        window.dispatchEvent(new Event('expensesUpdated'));
+        
         alert("Expense deleted successfully!");
       } catch (err) {
         console.error("Error deleting expense:", err);
@@ -213,6 +226,7 @@ function Expenses() {
                 <option value="Food">Food</option>
                 <option value="Transport">Transport</option>
                 <option value="Entertainment">Entertainment</option>
+                <option value="Coffee">Coffee</option>
                 <option value="Other">Other</option>
               </select>
             </div>
@@ -377,6 +391,9 @@ function Expenses() {
           )}
         </div>
       </div>
+
+      {/* 💰 PAY ME BACK TRACKER - ADDED HERE */}
+      <PayMeBack term={selectedTerm} />
     </div>
   );
 }

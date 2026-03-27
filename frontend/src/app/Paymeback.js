@@ -34,10 +34,21 @@ function PayMeBack({ term }) {
     e.preventDefault();
     
     try {
-      await axios.post("http://localhost:8080/api/shared-expenses", {
+      // 1. Create the shared expense
+      const sharedExpenseResponse = await axios.post("http://localhost:8080/api/shared-expenses", {
         ...formData,
         academicTerm: term,
         amountOwed: parseFloat(formData.amountOwed)
+      });
+      
+      // 2. Create a regular expense (you paid for it)
+      await axios.post("http://localhost:8080/api/expenses", {
+        description: `${formData.description} (Shared with ${formData.personName})`,
+        amount: parseFloat(formData.amountOwed),
+        category: "Other",
+        date: formData.date,
+        academicTerm: term,
+        sharedExpenseId: sharedExpenseResponse.data.id // Link them together
       });
       
       setFormData({
@@ -48,6 +59,10 @@ function PayMeBack({ term }) {
       });
       setShowAddForm(false);
       fetchSharedExpenses();
+      
+      // Notify dashboard to refresh
+      window.dispatchEvent(new Event('expensesUpdated'));
+      
     } catch (err) {
       console.error("Error creating shared expense:", err);
       alert("Failed to add shared expense");
@@ -56,8 +71,28 @@ function PayMeBack({ term }) {
 
   const markAsPaid = async (id) => {
     try {
+      // 1. Mark shared expense as paid
       await axios.put(`http://localhost:8080/api/shared-expenses/${id}/mark-paid`);
+      
+      // 2. Get the shared expense details to find the linked expense
+      const sharedExpense = sharedExpenses.find(exp => exp.id === id);
+      
+      if (sharedExpense) {
+        // 3. Create a "refund" expense (money returned to you)
+        await axios.post("http://localhost:8080/api/expenses", {
+          description: `Payment received from ${sharedExpense.personName} for ${sharedExpense.description}`,
+          amount: -sharedExpense.amountOwed, // Negative amount = money back
+          category: "Other",
+          date: new Date().toISOString().split('T')[0],
+          academicTerm: term
+        });
+      }
+      
       fetchSharedExpenses();
+      
+      // Notify dashboard to refresh
+      window.dispatchEvent(new Event('expensesUpdated'));
+      
     } catch (err) {
       console.error("Error marking as paid:", err);
     }
@@ -79,14 +114,16 @@ function PayMeBack({ term }) {
     try {
       await axios.delete(`http://localhost:8080/api/shared-expenses/${id}`);
       fetchSharedExpenses();
+      
+      // Notify dashboard to refresh
+      window.dispatchEvent(new Event('expensesUpdated'));
+      
     } catch (err) {
       console.error("Error deleting expense:", err);
     }
   };
 
   const totalOwed = sharedExpenses.reduce((sum, exp) => sum + exp.amountOwed, 0);
-
-  if (sharedExpenses.length === 0 && !showAddForm) return null;
 
   return (
     <div className="card" style={{ marginTop: "30px", backgroundColor: "#f0fdf4", border: "2px solid #10b981" }}>
@@ -117,6 +154,10 @@ function PayMeBack({ term }) {
           marginBottom: "25px",
           border: "1px solid #d1fae5"
         }}>
+          <div style={{ marginBottom: "15px", padding: "12px", backgroundColor: "#fef3c7", borderRadius: "8px", fontSize: "14px", color: "#92400e" }}>
+            💡 <strong>Note:</strong> This will be added to your expenses. When they pay you back, it'll be refunded to your budget.
+          </div>
+
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "15px" }}>
             <div>
               <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "500" }}>
@@ -333,6 +374,13 @@ function PayMeBack({ term }) {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {sharedExpenses.length === 0 && !showAddForm && (
+        <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>
+          <p>No shared expenses tracked yet.</p>
+          <p style={{ fontSize: "14px" }}>Click "+ Add Shared Expense" to track money your roommates owe you!</p>
         </div>
       )}
     </div>
