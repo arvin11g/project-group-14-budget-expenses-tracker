@@ -3,6 +3,8 @@ import expenseAPI from "../api/ExpensesAPI";
 import budgetAPI from "../api/BudgetAPI";
 import { formatCurrency } from "../utils/currency";
 import { splitExpenses, calculateExpenseTotal } from "../utils/expenseUtils";
+import CoffeeRealityCheck from "./CoffeeRealityCheck";
+import SimpleBurnRateDashboard from "./SimpleBurnRateDashboard";
 
 const TERMS = ["Winter 2026", "Summer 2026", "Fall 2026", "Winter 2027"];
 
@@ -113,6 +115,15 @@ function Dashboard() {
           {TERMS.map((t) => <option key={t} value={t}>{t}</option>)}
         </select>
       </div>
+
+      {/*BURN RATE DASHBOARD */}
+      <SimpleBurnRateDashboard 
+        term={selectedTerm}
+        totalBudget={totalBudget}
+        totalSpent={totalSpent}
+      />
+
+      <CoffeeRealityCheck term={selectedTerm} />
 
       {/* Top Summary Cards */}
       <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>

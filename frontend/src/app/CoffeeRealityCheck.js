@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-function CoffeeRealityCheck({ term, totalBudget }) {
+function CoffeeRealityCheck({ term }) {
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -25,16 +25,8 @@ function CoffeeRealityCheck({ term, totalBudget }) {
   // 1. Still loading
   // 2. No analysis data
   // 3. No wasteful spending
-  // 4. No budget set (can't calculate percentage)
-  // 5. Wasted less than 15% of budget (not significant enough)
-  if (loading || !analysis || analysis.totalWaste === 0 || !totalBudget || totalBudget <= 0) {
-    return null;
-  }
-
-  const wastePercentageOfBudget = (analysis.totalWaste / totalBudget) * 100;
-  
-  // Only show if wasted more than 15% of budget
-  if (wastePercentageOfBudget < 15) {
+  // 4. Less than 5 wasteful purchases (not enough data for meaningful analysis)
+  if (loading || !analysis || analysis.totalWaste === 0 || analysis.wasteCount < 5) {
     return null;
   }
 
@@ -62,11 +54,8 @@ function CoffeeRealityCheck({ term, totalBudget }) {
         <h3 style={{ fontSize: "24px", color: "#991b1b", marginBottom: "10px" }}>
           You've wasted <strong>${totalWaste.toFixed(2)}</strong> this term
         </h3>
-        <p style={{ fontSize: "16px", color: "#7f1d1d", marginBottom: "5px" }}>
+        <p style={{ fontSize: "16px", color: "#7f1d1d", marginBottom: "0" }}>
           That's <strong>{wastePercentage.toFixed(1)}%</strong> of your total spending ({wasteCount} purchases)
-        </p>
-        <p style={{ fontSize: "16px", color: "#991b1b", fontWeight: "600", marginBottom: "0" }}>
-          🚨 That's <strong>{wastePercentageOfBudget.toFixed(1)}%</strong> of your entire term budget!
         </p>
       </div>
 
