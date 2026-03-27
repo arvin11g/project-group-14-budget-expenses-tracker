@@ -323,6 +323,8 @@ Refactoring 3: Centralize planned vs actual handling
 
 ### March 26,2026 
 Attendees - Iyinoluwa
+
+Bugs Identified and Resolved:
 I noticed that when I added a new expense, it would update the dashboard but not show up in the All Expenses section. After debugging, I realized the issue was that the create and read operations were using different data paths. The expense was being saved through the service layer, but the Expenses page was fetching directly from the repository, which caused inconsistency. I fixed this by routing all read operations through the BudgetService so everything uses the same data access layer. I also corrected the Spring profile configuration so the application uses the database instead of the in-memory stub during normal runs. After this, both new and existing expenses display correctly.
 
 
