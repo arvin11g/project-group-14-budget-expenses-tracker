@@ -8,6 +8,7 @@ import Charts from "./Charts";
 import Profile from "./Profile";
 import YorkCostEstimator from "./YorkCostEstimator";
 import SpendingInsights from "./SpendingInsights";
+import OSAPDebtTracker from "./OsapDebtTracker";
 import "./App.css";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/york-cost-estimator" element={<YorkCostEstimator />} />
           <Route path="/spending-insights" element={<SpendingInsights />} />
+          <Route path="/osap-debt-tracker" element={<OSAPDebtTracker />} />
       </Routes>
       </div>
     </div>

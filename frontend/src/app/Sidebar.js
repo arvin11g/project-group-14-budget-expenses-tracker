@@ -14,6 +14,7 @@ function Sidebar() {
         <Link to="/spending-insights">Spending Insights</Link>
         <Link to="/charts">Charts</Link>
         <Link to="/profile">Profile</Link>
+        <Link to ="/osap-debt-tracker">Debt Calculator</Link>
       </nav>
     </div>
   );
