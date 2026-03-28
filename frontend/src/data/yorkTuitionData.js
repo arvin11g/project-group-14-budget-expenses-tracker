@@ -38,6 +38,9 @@ const yorkTuitionData = {
                 },
               ],
             },
+
+
+
             {
               faculty: "School of the Arts, Media, Performance & Design",
               programs: [
@@ -147,8 +150,223 @@ const yorkTuitionData = {
                 },
               ],
             },
+
+             {
+               faculty: "Faculty of Liberal Arts & Professional Studies",
+               programs: [
+                 {
+                   program: "Bachelor of Commerce",
+                   feesPerCredit: {
+                     domesticOntario: {
+                       tuition: 345.26,
+                       supplementary: 42.36,
+                       total: 387.62,
+                     },
+                     domesticOutOfProvince: {
+                       tuition: 349.75,
+                       supplementary: 42.36,
+                       total: 392.11,
+                     },
+                     international: {
+                       tuition: 1342.02,
+                       supplementary: 42.36,
+                       total: 1384.38,
+                     },
+                   },
+                   estimatedBooksAndSupplies: {
+                     min: 1000,
+                     max: 2000,
+                   },
+                 },
+                 {
+                   program: "Bachelor of Human Resources",
+                   feesPerCredit: {
+                     domesticOntario: {
+                       tuition: 253.35,
+                       supplementary: 42.36,
+                       total: 295.71,
+                     },
+                     domesticOutOfProvince: {
+                       tuition: 253.35,
+                       supplementary: 42.36,
+                       total: 295.71,
+                     },
+                     international: {
+                       tuition: 1257.33,
+                       supplementary: 42.36,
+                       total: 1299.69,
+                     },
+                   },
+                   estimatedBooksAndSupplies: {
+                     min: 1000,
+                     max: 2000,
+                   },
+                 },
+                 {
+                   program: "Information Technology (BDEM/BPA/BA)",
+                   feesPerCredit: {
+                     domesticOntario: {
+                       tuition: 288.24,
+                       supplementary: 42.36,
+                       total: 330.60,
+                     },
+                     domesticOutOfProvince: {
+                       tuition: 317.79,
+                       supplementary: 42.36,
+                       total: 360.15,
+                     },
+                     international: {
+                       tuition: 1323.29,
+                       supplementary: 42.36,
+                       total: 1365.65,
+                     },
+                   },
+                   estimatedBooksAndSupplies: {
+                     min: 1000,
+                     max: 2000,
+                   },
+                 },
+                 {
+                   program: "Economics / Business Economics / Financial & Business Economics",
+                   feesPerCredit: {
+                     domesticOntario: {
+                       tuition: 203.93,
+                       supplementary: 42.36,
+                       total: 246.29,
+                     },
+                     domesticOutOfProvince: {
+                       tuition: 224.84,
+                       supplementary: 42.36,
+                       total: 267.20,
+                     },
+                     international: {
+                       tuition: 1263.18,
+                       supplementary: 42.36,
+                       total: 1305.54,
+                     },
+                   },
+                   estimatedBooksAndSupplies: {
+                     min: 1000,
+                     max: 2000,
+                   },
+                 },
+                 {
+                   program: "Other LAPS Programs",
+                   feesPerCredit: {
+                     domesticOntario: {
+                       tuition: 203.93,
+                       supplementary: 42.36,
+                       total: 246.29,
+                     },
+                     domesticOutOfProvince: {
+                       tuition: 224.84,
+                       supplementary: 42.36,
+                       total: 267.20,
+                     },
+                     international: {
+                       tuition: 1239.79,
+                       supplementary: 42.36,
+                       total: 1282.15,
+                     },
+                   },
+                   estimatedBooksAndSupplies: {
+                     min: 1000,
+                     max: 2000,
+                   },
+                 },
+               ],
+             },
+
+             {
+               faculty: "Osgoode Hall Law School",
+               programs: [
+                 {
+                   program: "Juris Doctor (JD)",
+                   feesPerCredit: {
+                     domesticOntario: {
+                       tuition: 12401.13,
+                       supplementary: 687.98,
+                       total: 13089.11,
+                     },
+                     domesticOutOfProvince: {
+                       tuition: 13672.25,
+                       supplementary: 687.98,
+                       total: 14360.23,
+                     },
+                     international: {
+                       tuition: 22215.80,
+                       supplementary: 687.98,
+                       total: 22903.78,
+                     },
+                   },
+                   estimatedBooksAndSupplies: {
+                     min: 1500,
+                     max: 3000,
+                   },
+                 },
+               ],
+             },
+             {
+               faculty: "Schulich School of Business",
+               programs: [
+                 {
+                   program: "Schulich School of Business",
+                   feesPerCredit: {
+                     domesticOntario: {
+                       tuition: 345.26,
+                       supplementary: 44.11,
+                       total: 389.37,
+                     },
+                     domesticOutOfProvince: {
+                       tuition: 349.75,
+                       supplementary: 44.11,
+                       total: 393.86,
+                     },
+                     international: {
+                       tuition: 1383.18,
+                       supplementary: 44.11,
+                       total: 1427.29,
+                     },
+                   },
+                   estimatedBooksAndSupplies: {
+                     min: 1000,
+                     max: 2000,
+                   },
+                 },
+               ],
+             },
+             {
+               faculty: "Faculty of Science",
+               programs: [
+                 {
+                   program: "Faculty of Science",
+                   feesPerCredit: {
+                     domesticOntario: {
+                       tuition: 203.93,
+                       supplementary: 42.36,
+                       total: 246.29,
+                     },
+                     domesticOutOfProvince: {
+                       tuition: 224.84,
+                       supplementary: 42.36,
+                       total: 267.20,
+                     },
+                     international: {
+                       tuition: 1312.27,
+                       supplementary: 42.36,
+                       total: 1354.63,
+                     },
+                   },
+                   estimatedBooksAndSupplies: {
+                     min: 1000,
+                     max: 2000,
+                   },
+                 },
+               ],
+             },
             {
-              faculty: "Faculty of Environmental and Urban Change",
+
+             faculty: "Faculty of Environmental and Urban Change",
               programs: [
                 {
                   program: " Faculty of Environmental and Urban Change",

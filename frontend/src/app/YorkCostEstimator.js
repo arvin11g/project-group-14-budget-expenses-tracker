@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import yorkTuitionData from "../data/yorkTuitionData";
 import yorkResidenceData from "../data/yorkResidenceData";
 import expenseAPI from "../api/ExpensesAPI";
@@ -31,6 +31,8 @@ function YorkCostEstimator() {
     yorkResidenceData.residences?.[0]?.options?.[0]?.roomType || ""
   );
   const [selectedDiningPlan, setSelectedDiningPlan] = useState("Entry");
+  const [monthlyRent, setMonthlyRent] = useState(1200);
+  const [rentalMonths, setRentalMonths] = useState(8);
 
   const homeCurrency = getHomeCurrency();
 
@@ -56,7 +58,22 @@ function YorkCostEstimator() {
     return programOptions.find((p) => p.program === selectedProgram);
   }, [programOptions, selectedProgram]);
 
-  const residenceOptions = yorkResidenceData.residences || [];
+  const residenceOptions = useMemo(() => {
+    const baseResidences = yorkResidenceData.residences || [];
+    return [
+      ...baseResidences,
+      {
+        name: "Apartment / Off-Campus",
+        options: [
+          {
+            roomType: "Custom Monthly Rent",
+            rate: 0,
+            diningRequired: false,
+          },
+        ],
+      },
+    ];
+  }, []);
 
   const currentResidence = useMemo(() => {
     return residenceOptions.find((r) => r.name === selectedResidence);
@@ -75,6 +92,7 @@ function YorkCostEstimator() {
   }, [diningPlanOptions, selectedDiningPlan]);
 
   const isDiningRequired = currentRoom?.diningRequired === true;
+  const isApartmentHousing = selectedResidence === "Apartment / Off-Campus";
 
   const perCreditFees = currentProgram?.feesPerCredit?.[studentType] || {
     tuition: 0,
@@ -86,19 +104,18 @@ function YorkCostEstimator() {
   const booksLow = currentProgram?.estimatedBooksAndSupplies?.min || 0;
   const booksHigh = currentProgram?.estimatedBooksAndSupplies?.max || 0;
 
-  const residenceRate = currentRoom?.rate || 0;
-  const applicationFee = yorkResidenceData.additionalFees?.applicationFee || 0;
-  const roomDeposit = yorkResidenceData.additionalFees?.roomDeposit || 0;
+  const residenceRate = isApartmentHousing ? Number(monthlyRent) || 0 : currentRoom?.rate || 0;
+  const applicationFee = isApartmentHousing ? 0 : yorkResidenceData.additionalFees?.applicationFee || 0;
+  const roomDeposit = isApartmentHousing ? 0 : yorkResidenceData.additionalFees?.roomDeposit || 0;
   const residenceAdminFee =
-    yorkResidenceData.additionalFees?.residenceLifeActivityAndAdministrationFee || 0;
+    isApartmentHousing ? 0 : yorkResidenceData.additionalFees?.residenceLifeActivityAndAdministrationFee || 0;
 
-  const diningCost = currentDiningPlan?.cost || 0;
+  const diningCost = isApartmentHousing ? 0 : currentDiningPlan?.cost || 0;
 
-  const housingTotal = calculateHousing(
-    currentRoom,
-    currentDiningPlan,
-    yorkResidenceData.additionalFees
-  );
+  const apartmentHousingTotal = (Number(monthlyRent) || 0) * (Number(rentalMonths) || 0);
+  const housingTotal = isApartmentHousing
+    ? apartmentHousingTotal
+    : calculateHousing(currentRoom, currentDiningPlan, yorkResidenceData.additionalFees);
   const totalCost = calculateTotalCost(tuitionTotal, housingTotal);
   const upfrontTotal = applicationFee + roomDeposit + residenceAdminFee;
   const estimatedTotalLow = tuitionTotal + booksLow + housingTotal;
@@ -141,12 +158,24 @@ function YorkCostEstimator() {
     setSelectedResidence(value);
     setSelectedRoomType(newRoom?.roomType || "");
 
+    if (value === "Apartment / Off-Campus") {
+      setSelectedDiningPlan("None");
+      return;
+    }
+
     if (newRoom?.diningRequired) {
       setSelectedDiningPlan("Entry");
     } else {
       setSelectedDiningPlan("None");
     }
   };
+
+  useEffect(() => {
+    if (isApartmentHousing) {
+      setSelectedRoomType("Custom Monthly Rent");
+      setSelectedDiningPlan("None");
+    }
+  }, [isApartmentHousing]);
 
   const handleRoomTypeChange = (value) => {
     const newRoom = roomOptions.find((room) => room.roomType === value);
@@ -293,11 +322,12 @@ function YorkCostEstimator() {
             </select>
           </Field>
 
-          <Field label="Room Type">
+          <Field label={isApartmentHousing ? "Housing Type" : "Room Type"}>
             <select
               value={selectedRoomType}
               onChange={(e) => handleRoomTypeChange(e.target.value)}
               style={inputStyle}
+              disabled={isApartmentHousing}
             >
               {roomOptions.map((room) => (
                 <option key={room.roomType} value={room.roomType}>
@@ -307,11 +337,36 @@ function YorkCostEstimator() {
             </select>
           </Field>
 
-          <Field label={isDiningRequired ? "Dining Plan (Required)" : "Dining Plan (Optional)"}>
+          {isApartmentHousing && (
+            <>
+              <Field label="Monthly Rent">
+                <input
+                  type="number"
+                  min="0"
+                  value={monthlyRent}
+                  onChange={(e) => setMonthlyRent(Number(e.target.value))}
+                  style={inputStyle}
+                />
+              </Field>
+
+              <Field label="Number of Months">
+                <input
+                  type="number"
+                  min="1"
+                  value={rentalMonths}
+                  onChange={(e) => setRentalMonths(Number(e.target.value))}
+                  style={inputStyle}
+                />
+              </Field>
+            </>
+          )}
+
+          <Field label={isApartmentHousing ? "Dining Plan" : isDiningRequired ? "Dining Plan (Required)" : "Dining Plan (Optional)"}>
             <select
               value={selectedDiningPlan}
               onChange={(e) => setSelectedDiningPlan(e.target.value)}
               style={inputStyle}
+              disabled={isApartmentHousing}
             >
               {diningPlanOptions
                 .filter((plan) => (isDiningRequired ? plan.name !== "None" : true))
@@ -355,12 +410,12 @@ function YorkCostEstimator() {
         <div className="card" style={resultCardStyle}>
           <h2 style={sectionTitleStyle}>Residence Estimate</h2>
           <div style={infoRowStyle}>
-            <span>Residence rate</span>
+            <span>{isApartmentHousing ? "Monthly rent" : "Residence rate"}</span>
             <strong>{formatCurrency(residenceRate)}</strong>
           </div>
           <div style={infoRowStyle}>
-            <span>Dining plan</span>
-            <strong>{formatCurrency(diningCost)}</strong>
+            <span>{isApartmentHousing ? "Length of stay" : "Dining plan"}</span>
+            <strong>{isApartmentHousing ? `${rentalMonths} months` : formatCurrency(diningCost)}</strong>
           </div>
           <div style={infoRowStyle}>
             <span>Application fee</span>
@@ -375,7 +430,7 @@ function YorkCostEstimator() {
             <strong>{formatCurrency(residenceAdminFee)}</strong>
           </div>
           <div style={infoRowStyle}>
-            <span>Housing total (without deposit)</span>
+            <span>{isApartmentHousing ? "Total rent" : "Housing total (without deposit)"}</span>
             <strong>{formatCurrency(housingTotal)}</strong>
           </div>
           <div style={infoRowStyle}>
@@ -413,12 +468,16 @@ function YorkCostEstimator() {
           </p>
           <p>
             <strong>Dining plan:</strong>{" "}
-            {isDiningRequired
-              ? "Required for this room type."
-              : "Optional for this room type."}
+            {isApartmentHousing
+              ? "Not included for apartment housing."
+              : isDiningRequired
+                ? "Required for this room type."
+                : "Optional for this room type."}
           </p>
           <p>
-            <strong>Note:</strong> The room deposit is shown separately because it is an upfront payment.
+            <strong>Note:</strong> {isApartmentHousing
+              ? "Apartment housing uses your custom monthly rent and rental length instead of York residence rates."
+              : "The room deposit is shown separately because it is an upfront payment."}
           </p>
           {currentProgram?.notes && (
             <p style={{ marginBottom: 0 }}>
