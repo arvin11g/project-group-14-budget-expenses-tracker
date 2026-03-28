@@ -182,6 +182,8 @@ function EquivalentItem({ icon, count, label }) {
       </div>
     </div>
   );
+
+
 }
 
 export default CoffeeRealityCheck;

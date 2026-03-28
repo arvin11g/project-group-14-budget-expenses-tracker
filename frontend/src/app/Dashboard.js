@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import expenseAPI from "../api/ExpensesAPI";
 import budgetAPI from "../api/BudgetAPI";
-import CoffeeRealityCheck from "./CoffeeRealityCheck";
+// import CoffeeRealityCheck from "./CoffeeRealityCheck";
 import SpendingComparison from "./SpendingComparison";
 
 const TERMS = ["Winter 2026", "Summer 2026", "Fall 2026", "Winter 2027"];
@@ -14,7 +14,7 @@ function Dashboard() {
   const [editingBudget, setEditingBudget] = useState(false);
   const [budgetInput, setBudgetInput] = useState("");
   const [loading, setLoading] = useState(true);
-const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState("");
 
 useEffect(() => {
   const savedProfile = localStorage.getItem("studentBudgetProfile");
@@ -111,11 +111,9 @@ useEffect(() => {
         </select>
       </div>
 
-      {/* ☕ COFFEE REALITY CHECK */}
-      <CoffeeRealityCheck term={selectedTerm} totalBudget={totalBudget} />
-
       {/* SPENDING COMPARISON */}
-      <SpendingComparison term={selectedTerm} totalSpent={totalSpent} />
+      {/* <SpendingComparison term={selectedTerm} totalSpent={totalSpent} /> */}
+    {/*  <CoffeeRealityCheck term={selectedTerm} totalSpent={totalSpent} /> */}
 
       {/* Top Summary Cards */}
       <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>

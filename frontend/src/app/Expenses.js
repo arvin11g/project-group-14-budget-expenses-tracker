@@ -3,6 +3,8 @@ import expenseAPI from "../api/ExpensesAPI";
 import { formatCurrency } from "../utils/currency";
 import PayMeBack from "./Paymeback";
 
+const TERMS = ["Winter 2026", "Summer 2026", "Fall 2026", "Winter 2027"];
+
 function Expenses() {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
