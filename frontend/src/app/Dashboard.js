@@ -14,6 +14,16 @@ function Dashboard() {
   const [editingBudget, setEditingBudget] = useState(false);
   const [budgetInput, setBudgetInput] = useState("");
   const [loading, setLoading] = useState(true);
+const [userName, setUserName] = useState("");
+
+useEffect(() => {
+  const savedProfile = localStorage.getItem("studentBudgetProfile");
+
+  if (savedProfile) {
+    const parsedProfile = JSON.parse(savedProfile);
+    setUserName(parsedProfile.name || "");
+  }
+}, []);
 
   useEffect(() => {
     fetchDashboardData();
@@ -91,7 +101,7 @@ function Dashboard() {
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1>Dashboard</h1>
+  <h1>{userName ? `Hello, ${userName}` : "Dashboard"}</h1>
         <select
           value={selectedTerm}
           onChange={(e) => setSelectedTerm(e.target.value)}
