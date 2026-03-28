@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 // Average OSAP debt by York faculty (based on typical program lengths and costs)
+// This was helped Established by AI (Gemini + GPT) for styling and logic- Ayesh 
 const FACULTY_AVERAGES = {
   "Lassonde School of Engineering": {
     avgDebt: 28500,
