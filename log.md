@@ -319,8 +319,55 @@ Refactoring 1: Move York estimator calculation logic out of the UI
 Refactoring 2: Make controllers consistently go through the service layer instead of calling the repositories.
 Refactoring 3: Centralize planned vs actual handling
 
+**USER STORIES AND DEVELOPER TASKS**
 
+1. Flexible Housing Cost Estimation
 
+Developer Tasks
+	•	add apartment/off-campus option
+	•	add monthly rent input
+	•	add number of months input
+	•	update housing calculation logic
+	•	update residence estimate display
+	•	test custom rent totals
+
+Planned Cost: 5 days
+Actual Cost: 5 days
+
+⸻
+
+2. Improved Spending View
+
+Developer Tasks
+	•	remove extra sections from dashboard
+	•	move spending feature to a separate page
+	•	clean up wording and layout
+	•	update sidebar navigation
+	•	make dashboard refresh correctly after changes
+
+Planned Cost: 2 days
+Actual Cost: 3 days
+
+⸻
+
+3. Shared Expenses
+
+Developer Tasks
+	•	create shared expense form
+	•	add name, amount, and description fields
+	•	display shared expenses in tracker
+	•	add mark-as-paid function
+	•	remove linked expense from main list when paid
+	•	fix UI and update behavior
+
+Planned Cost: 3 days
+Actual Cost: 4 days
+
+⸻
+
+Discrepancies
+
+The spending view and shared expenses features took longer than planned because of debugging, UI cleanup, and merge conflicts. Extra time was also needed to make sure updates were reflected correctly across the app.
 ### March 26,2026 
 Attendees - Iyinoluwa
 
@@ -333,5 +380,9 @@ Bugs Identified and Resolved:
 3.)I noticed that the name in the Profile section was not persisting after being updated. When I entered a new name and then navigated to another page like the Dashboard, the Profile page reset the name back to "York University Student" when I came back. This suggests the updated profile data is not being saved or reloaded properly.
 
  Cleaned up the Dashboard by removing the burn rate section and the financial health block. They were taking up too much space on the main page and made the dashboard feel cluttered. I moved that direction into a separate Spending Insights page so the Dashboard stays focused on the main budgeting overview.
+
+
+
+ 
 
 
