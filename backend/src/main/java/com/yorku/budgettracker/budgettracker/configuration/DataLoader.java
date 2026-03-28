@@ -24,10 +24,10 @@ public class DataLoader {
 
             if (expenseRepository.count() == 0) {
                 expenseRepository.save(new Expense(
-                        "Rent",
-                        "Residence payment",
-                        1200,
-                        LocalDate.of(2026, 1, 10),
+                        "Utiities",
+                        "Phone bill",
+                        80,
+                       LocalDate.now(),
                         "Winter 2026"
                 ));
 
@@ -35,15 +35,15 @@ public class DataLoader {
                         "Food",
                         "Groceries",
                         150,
-                        LocalDate.of(2026, 1, 14),
+                        LocalDate.now(),
                         "Winter 2026"
                 ));
 
                 expenseRepository.save(new Expense(
-                        "Textbooks",
-                        "Engineering textbook",
-                        220,
-                        LocalDate.of(2026, 1, 18),
+                        "Education",
+                        "Laptop payment",
+                        500,
+                        LocalDate.now(),
                         "Winter 2026"
                 ));
 
@@ -51,7 +51,7 @@ public class DataLoader {
                         "Transport",
                         "TTC pass",
                         128,
-                        LocalDate.of(2026, 1, 8),
+                        LocalDate.now(),
                         "Winter 2026"
                 ));
             }

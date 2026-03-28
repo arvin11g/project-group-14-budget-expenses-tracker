@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import expenseAPI from "../api/ExpensesAPI";
 import budgetAPI from "../api/BudgetAPI";
-import SimpleBurnRateDashboard from "./SimpleBurnRateDashboard.js";
 import CoffeeRealityCheck from "./CoffeeRealityCheck";
 import SpendingComparison from "./SpendingComparison";
 
@@ -20,17 +19,16 @@ function Dashboard() {
     fetchDashboardData();
   }, [selectedTerm]);
 
-  // 🔧 FIX: Listen for expense updates from Expenses page
+  // Listen for expense updates and refresh dashboard
   useEffect(() => {
     const handleExpenseUpdate = () => {
-      console.log("Expenses updated, refreshing dashboard...");
       fetchDashboardData();
     };
 
-    window.addEventListener('expensesUpdated', handleExpenseUpdate);
-    
+    window.addEventListener("expensesUpdated", handleExpenseUpdate);
+
     return () => {
-      window.removeEventListener('expensesUpdated', handleExpenseUpdate);
+      window.removeEventListener("expensesUpdated", handleExpenseUpdate);
     };
   }, [selectedTerm]);
 
@@ -102,13 +100,6 @@ function Dashboard() {
           {TERMS.map((t) => <option key={t} value={t}>{t}</option>)}
         </select>
       </div>
-
-      {/* 🔥 BURN RATE DASHBOARD - THE KILLER FEATURE */}
-      <SimpleBurnRateDashboard 
-        term={selectedTerm}
-        totalBudget={totalBudget}
-        totalSpent={totalSpent}
-      />
 
       {/* ☕ COFFEE REALITY CHECK */}
       <CoffeeRealityCheck term={selectedTerm} totalBudget={totalBudget} />

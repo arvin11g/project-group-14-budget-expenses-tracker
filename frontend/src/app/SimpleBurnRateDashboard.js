@@ -67,7 +67,7 @@ function SimpleBurnRateDashboard({ term, totalBudget, totalSpent }) {
   if (!analysis) {
     return (
       <div className="card" style={{ marginTop: "30px", marginBottom: "20px" }}>
-        <h2 style={{ marginBottom: "10px" }}>Will You Run Out of Money?</h2>
+        <h2 style={{ marginBottom: "10px" }}>Budget Projection</h2>
         <p style={{ color: "#6b7280", margin: 0 }}>Loading burn rate...</p>
       </div>
     );
@@ -78,7 +78,7 @@ function SimpleBurnRateDashboard({ term, totalBudget, totalSpent }) {
 
   return (
     <div className="card" style={{ marginTop: "30px", marginBottom: "20px" }}>
-      <h2 style={{ marginBottom: "20px" }}>Will You Run Out of Money?</h2>
+      <h2 style={{ marginBottom: "20px" }}>Budget Projection</h2>
 
       {/* Alert Banner */}
       {isWarning && (
@@ -115,76 +115,61 @@ function SimpleBurnRateDashboard({ term, totalBudget, totalSpent }) {
       {/* Key Metrics */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "25px" }}>
         <MetricBox
-          label="Your Daily Spending"
+          label="Current Daily Spending"
           value={`$${safeFixed(analysis.dailyBurnRate, 2)}/day`}
           subtitle={`Based on ${analysis.daysElapsed} days`}
           color={analysis.dailyBurnRate > analysis.targetDailySpending ? "#ef4444" : "#2563eb"}
         />
         <MetricBox
-          label="Target to Make It"
+          label="Target Daily Spending"
           value={`$${safeFixed(analysis.targetDailySpending, 2)}/day`}
           subtitle={`${analysis.daysRemaining} days left`}
           color="#10b981"
         />
       </div>
 
-      {/* Progress Comparison */}
-      <div style={{ marginBottom: "25px" }}>
-        <div style={{ marginBottom: "15px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
-            <span style={{ fontSize: "14px", fontWeight: "500" }}>Money Spent</span>
-            <span style={{ fontSize: "14px", color: "#6b7280" }}>
-              {safeFixed(analysis.percentageSpent, 1)}%
-            </span>
-          </div>
-          <ProgressBar
-            percentage={analysis.percentageSpent}
-            color={analysis.percentageSpent > analysis.percentageTimeElapsed ? "#ef4444" : "#10b981"}
-          />
-        </div>
-
-        <div>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
-            <span style={{ fontSize: "14px", fontWeight: "500" }}>Time Passed</span>
-            <span style={{ fontSize: "14px", color: "#6b7280" }}>
-              {safeFixed(analysis.percentageTimeElapsed, 1)}%
-            </span>
-          </div>
-          <ProgressBar percentage={analysis.percentageTimeElapsed} color="#3b82f6" />
-        </div>
-
-        {analysis.percentageSpent > analysis.percentageTimeElapsed && (
-          <p style={{ marginTop: "12px", fontSize: "14px", color: "#ef4444", fontWeight: "500" }}>
-            You're spending faster than time is passing.
-            <br />
-            <span style={{ fontSize: "13px" }}>
-              ({safeFixed((analysis.percentageSpent ?? 0) - (analysis.percentageTimeElapsed ?? 0), 1)}% ahead of schedule)
-            </span>
-          </p>
-        )}
-      </div>
-
-      {/* What To Do */}
       {isWarning && (
-        <div style={{ backgroundColor: "#f9fafb", padding: "15px", borderRadius: "8px", border: "1px solid #e5e7eb" }}>
-          <h3 style={{ marginBottom: "10px", fontSize: "15px", color: "#374151" }}>How to Fix This:</h3>
-          <ul style={{ marginLeft: "18px", lineHeight: "1.7", color: "#374151", fontSize: "14px" }}>
-            <li>
-              Cut spending from <strong>${safeFixed(analysis.dailyBurnRate, 2)}/day</strong> to <strong>${safeFixed(analysis.targetDailySpending, 2)}/day</strong>
-            </li>
-            <li>
-              Save <strong>${safeFixed((analysis.dailyBurnRate ?? 0) - (analysis.targetDailySpending ?? 0), 2)}/day</strong> ({safeFixed(((analysis.dailyBurnRate ?? 0) - (analysis.targetDailySpending ?? 0)) * 7, 2)}/week)
-            </li>
-            <li>Focus on cutting: food delivery, coffee, entertainment</li>
-          </ul>
+        <div style={{ marginTop: "10px" }}>
+          <h3 style={{ marginBottom: "12px", fontSize: "15px", color: "#374151" }}>
+            Suggested Adjustment
+          </h3>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+            <div style={{
+              padding: "15px",
+              border: "1px solid #d1d5db",
+              borderRadius: "8px",
+              backgroundColor: "white"
+            }}>
+              <div style={{ fontSize: "13px", color: "#6b7280", marginBottom: "4px" }}>
+                Target Daily Spend
+              </div>
+              <div style={{ fontSize: "22px", fontWeight: "700", color: "#111827", marginBottom: "4px" }}>
+                ${safeFixed(analysis.targetDailySpending, 2)}/day
+              </div>
+            </div>
+
+            <div style={{
+              padding: "15px",
+              border: "1px solid #d1d5db",
+              borderRadius: "8px",
+              backgroundColor: "white"
+            }}>
+              <div style={{ fontSize: "13px", color: "#6b7280", marginBottom: "4px" }}>
+                Daily Reduction
+              </div>
+              <div style={{ fontSize: "22px", fontWeight: "700", color: "#111827", marginBottom: "4px" }}>
+                ${safeFixed((analysis.dailyBurnRate ?? 0) - (analysis.targetDailySpending ?? 0), 2)}/day
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
       {analysis.onTrack && !isWarning && (
         <div style={{ backgroundColor: "#f9fafb", padding: "15px", borderRadius: "8px", border: "1px solid #e5e7eb" }}>
           <p style={{ color: "#374151", fontSize: "14px", margin: 0 }}>
-            <strong>Great job.</strong> You're projected to finish with <strong>${safeFixed(analysis.projectedEndBalance, 2)}</strong> remaining.
-            Consider setting some aside for next term or emergencies.
+            <strong>You're in a good position.</strong> You're projected to finish with <strong>${safeFixed(analysis.projectedEndBalance, 2)}</strong> remaining.
           </p>
         </div>
       )}
