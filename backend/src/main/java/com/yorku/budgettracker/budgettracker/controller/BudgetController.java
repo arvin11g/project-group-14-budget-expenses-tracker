@@ -18,14 +18,18 @@ import com.yorku.budgettracker.budgettracker.repository.BudgetRepository;
 @CrossOrigin(origins = "http://localhost:3000")
 public class BudgetController {
 
+    // used for saving and getting budget data from the database
     private final BudgetRepository budgetRepository;
+    // handles the budget-related calculations and summary logic
     private final BudgetService budgetService;
 
+    // brings in the repository and service so this controller can use them
     public BudgetController(BudgetRepository budgetRepository, BudgetService budgetService) {
         this.budgetRepository = budgetRepository;
         this.budgetService = budgetService;
     }
 
+    // gets the saved budget for a term, and if there is none yet it returns a default budget of 0
     @GetMapping("/term/{term}")
     public ResponseEntity<Budget> getBudgetByTerm(@PathVariable String term) {
         return budgetRepository.findByAcademicTerm(term)
@@ -33,16 +37,18 @@ public class BudgetController {
                 .orElse(ResponseEntity.ok(new Budget(term, 0.0)));
     }
 
+    // saves a new budget or updates the existing one for the selected term
     @PostMapping
     public ResponseEntity<Budget> saveOrUpdateBudget(@RequestBody Budget budget) {
         Budget existingBudget = budgetRepository.findByAcademicTerm(budget.getAcademicTerm())
                 .orElse(new Budget());
-        
+
         existingBudget.setAcademicTerm(budget.getAcademicTerm());
         existingBudget.setAmount(budget.getAmount());
-        
+
         return ResponseEntity.ok(budgetRepository.save(existingBudget));
     }
+    // builds the full term summary using the saved budget and the expenses for that term
     @GetMapping("/term/{term}/summary")
     public ResponseEntity<?> getTermSummary(@PathVariable String term) {
 
@@ -63,6 +69,7 @@ public class BudgetController {
                 )
         );
     }
+    // returns all budgets that are currently saved
     @GetMapping
     public ResponseEntity<?> getAllBudgets() {
         return ResponseEntity.ok(budgetRepository.findAll());

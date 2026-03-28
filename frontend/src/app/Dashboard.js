@@ -204,7 +204,7 @@ function ProgressBar({ percentage, overBudget }) {
         }} />
       </div>
       <p style={{ marginTop: "10px", color: overBudget ? "#ef4444" : "inherit" }}>
-        {percentage.toFixed(1)}% Used {overBudget && "⚠️ Over budget!"}
+        {percentage.toFixed(1)}% Used {overBudget && "Over budget!"}
       </p>
     </div>
   );
