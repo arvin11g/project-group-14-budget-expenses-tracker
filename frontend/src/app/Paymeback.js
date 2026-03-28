@@ -78,14 +78,16 @@ function PayMeBack({ term }) {
       const sharedExpense = sharedExpenses.find(exp => exp.id === id);
       
       if (sharedExpense) {
-        // 3. Create a "refund" expense (money returned to you)
-        await axios.post("http://localhost:8080/api/expenses", {
-          description: `Payment received from ${sharedExpense.personName} for ${sharedExpense.description}`,
-          amount: -sharedExpense.amountOwed, // Negative amount = money back
-          category: "Other",
-          date: new Date().toISOString().split('T')[0],
-          academicTerm: term
-        });
+        // 3. Remove the linked regular expense from the expenses list
+        const expensesRes = await axios.get(`http://localhost:8080/api/expenses/term/${term}`);
+        const linkedExpense = expensesRes.data.find((expense) =>
+          expense.description === `${sharedExpense.description} (Shared with ${sharedExpense.personName})` &&
+          Number(expense.amount) === Number(sharedExpense.amountOwed)
+        );
+
+        if (linkedExpense) {
+          await axios.delete(`http://localhost:8080/api/expenses/${linkedExpense.id}`);
+        }
       }
       
       fetchSharedExpenses();
@@ -126,9 +128,9 @@ function PayMeBack({ term }) {
   const totalOwed = sharedExpenses.reduce((sum, exp) => sum + exp.amountOwed, 0);
 
   return (
-    <div className="card" style={{ marginTop: "30px", backgroundColor: "#f0fdf4", border: "2px solid #10b981" }}>
+    <div className="card" style={{ marginTop: "30px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-        <h2 style={{ margin: 0, color: "#065f46" }}>💰 Pay Me Back Tracker</h2>
+        <h2 style={{ margin: 0 }}>Shared Expenses</h2>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
           style={{
@@ -141,7 +143,7 @@ function PayMeBack({ term }) {
             fontWeight: "600"
           }}
         >
-          {showAddForm ? "Cancel" : "+ Add Shared Expense"}
+          {showAddForm ? "Cancel" : "Add Shared Expense"}
         </button>
       </div>
 
@@ -149,13 +151,13 @@ function PayMeBack({ term }) {
       {showAddForm && (
         <form onSubmit={handleSubmit} style={{
           padding: "20px",
-          backgroundColor: "white",
+          backgroundColor: "#f9fafb",
           borderRadius: "12px",
           marginBottom: "25px",
-          border: "1px solid #d1fae5"
+          border: "1px solid #e5e7eb"
         }}>
-          <div style={{ marginBottom: "15px", padding: "12px", backgroundColor: "#fef3c7", borderRadius: "8px", fontSize: "14px", color: "#92400e" }}>
-            💡 <strong>Note:</strong> This will be added to your expenses. When they pay you back, it'll be refunded to your budget.
+          <div style={{ marginBottom: "15px", padding: "12px", backgroundColor: "#f9fafb", borderRadius: "8px", fontSize: "14px", color: "#4b5563", border: "1px solid #e5e7eb" }}>
+            <strong>Note:</strong> This amount will be added to your expenses. When you mark it as paid, the returned amount will be recorded.
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "15px" }}>
@@ -178,7 +180,7 @@ function PayMeBack({ term }) {
                 }}
               />
             </div>
-            
+
             <div>
               <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "500" }}>
                 Who owes you?
@@ -221,7 +223,7 @@ function PayMeBack({ term }) {
                 }}
               />
             </div>
-            
+
             <div>
               <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "500" }}>
                 Date
@@ -263,22 +265,22 @@ function PayMeBack({ term }) {
       {/* Summary by Person */}
       {summary.length > 0 && (
         <div style={{ marginBottom: "25px" }}>
-          <h3 style={{ fontSize: "18px", color: "#065f46", marginBottom: "15px" }}>
-            💸 Total Owed: ${totalOwed.toFixed(2)}
+          <h3 style={{ fontSize: "18px", marginBottom: "15px" }}>
+            Total Owed: ${totalOwed.toFixed(2)}
           </h3>
-          
+
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "12px" }}>
             {summary.map((person) => (
               <div key={person.personName} style={{
                 padding: "15px",
                 backgroundColor: "white",
                 borderRadius: "8px",
-                border: "2px solid #10b981"
+                border: "1px solid #e5e7eb"
               }}>
-                <div style={{ fontSize: "16px", fontWeight: "600", color: "#065f46", marginBottom: "5px" }}>
+                <div style={{ fontSize: "16px", fontWeight: "600", marginBottom: "5px" }}>
                   {person.personName}
                 </div>
-                <div style={{ fontSize: "24px", fontWeight: "bold", color: "#059669" }}>
+                <div style={{ fontSize: "24px", fontWeight: "bold", color: "#111827" }}>
                   ${person.totalOwed.toFixed(2)}
                 </div>
                 <div style={{ fontSize: "13px", color: "#6b7280", marginTop: "5px" }}>
@@ -293,15 +295,15 @@ function PayMeBack({ term }) {
       {/* Expense List */}
       {sharedExpenses.length > 0 && (
         <div>
-          <h3 style={{ fontSize: "16px", color: "#065f46", marginBottom: "15px" }}>Outstanding Debts</h3>
-          
+          <h3 style={{ fontSize: "16px", marginBottom: "15px" }}>Outstanding Shared Expenses</h3>
+
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {sharedExpenses.map((expense) => (
               <div key={expense.id} style={{
                 padding: "15px",
                 backgroundColor: "white",
                 borderRadius: "8px",
-                border: "1px solid #d1fae5",
+                border: "1px solid #e5e7eb",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center"
@@ -313,17 +315,17 @@ function PayMeBack({ term }) {
                   <div style={{ fontSize: "13px", color: "#6b7280" }}>
                     {expense.personName} • {new Date(expense.date).toLocaleDateString()}
                     {expense.remindersSent > 0 && (
-                      <span style={{ marginLeft: "10px", color: "#f59e0b" }}>
-                        📬 {expense.remindersSent} {expense.remindersSent === 1 ? "reminder" : "reminders"} sent
+                      <span style={{ marginLeft: "10px", color: "#6b7280" }}>
+                        {expense.remindersSent} {expense.remindersSent === 1 ? "reminder" : "reminders"} sent
                       </span>
                     )}
                   </div>
                 </div>
-                
-                <div style={{ fontSize: "20px", fontWeight: "bold", color: "#059669", marginRight: "20px" }}>
+
+                <div style={{ fontSize: "20px", fontWeight: "bold", color: "#111827", marginRight: "20px" }}>
                   ${expense.amountOwed.toFixed(2)}
                 </div>
-                
+
                 <div style={{ display: "flex", gap: "8px" }}>
                   <button
                     onClick={() => sendReminder(expense.id)}
@@ -338,7 +340,7 @@ function PayMeBack({ term }) {
                       fontWeight: "600"
                     }}
                   >
-                    📬 Remind
+                    Remind
                   </button>
                   <button
                     onClick={() => markAsPaid(expense.id)}
@@ -353,7 +355,7 @@ function PayMeBack({ term }) {
                       fontWeight: "600"
                     }}
                   >
-                    ✓ Paid
+                    Mark Paid
                   </button>
                   <button
                     onClick={() => deleteExpense(expense.id)}
@@ -368,7 +370,7 @@ function PayMeBack({ term }) {
                       fontWeight: "600"
                     }}
                   >
-                    ✕
+                    Delete
                   </button>
                 </div>
               </div>
@@ -379,8 +381,8 @@ function PayMeBack({ term }) {
 
       {sharedExpenses.length === 0 && !showAddForm && (
         <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>
-          <p>No shared expenses tracked yet.</p>
-          <p style={{ fontSize: "14px" }}>Click "+ Add Shared Expense" to track money your roommates owe you!</p>
+          <p style={{ marginBottom: "8px" }}>No shared expenses added yet.</p>
+          <p style={{ fontSize: "14px", margin: 0 }}>Use “Add Shared Expense” to track money that is owed to you.</p>
         </div>
       )}
     </div>
